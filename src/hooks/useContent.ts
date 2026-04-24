@@ -80,9 +80,11 @@ export function useContent() {
             setFeatures(snap.docs.map(d => ({ id: d.id, ...d.data() })))
         })
 
-        setLoading(false)
+        // Mark loading as false once initial snapshots are done (approximately)
+        const timeout = setTimeout(() => setLoading(false), 2000)
 
         return () => {
+            clearTimeout(timeout)
             unsubSettings(); unsubSlides(); unsubPortfolio();
             unsubServices(); unsubTeam(); unsubFeatures();
         }
