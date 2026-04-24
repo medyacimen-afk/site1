@@ -33,7 +33,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {/* Sidebar */}
             <aside className={`fixed inset-y-0 left-0 bg-white w-64 shadow-xl z-50 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static transition-transform duration-300 flex flex-col`}>
                 <div className="h-20 flex items-center justify-between px-6 border-b border-black/5">
-                    <span className="font-serif font-black text-xl tracking-tight text-black">Snaplens <span className="text-[#D49A73]">Admin</span></span>
+                    <span className="font-serif font-black text-xl tracking-tight text-black">SDF <span className="text-[#D49A73]">Admin</span></span>
                     <button className="lg:hidden" onClick={() => setSidebarOpen(false)}>
                         <X className="w-6 h-6 text-gray-500" />
                     </button>

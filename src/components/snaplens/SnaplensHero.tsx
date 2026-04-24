@@ -19,7 +19,14 @@ export default function SnaplensHero() {
         }
     }, [slides.length])
 
-    if (loading || slides.length === 0) {
+    const fallbackSlides = [
+        { id: 'f1', image: "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1920" },
+        { id: 'f2', image: "https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=1920" }
+    ]
+
+    const activeSlides = slides.length > 0 ? slides : fallbackSlides
+
+    if (loading) {
         return (
             <div className="h-[100svh] w-full bg-white flex items-center justify-center">
                  <Loader2 className="w-10 h-10 text-primary animate-spin" />
@@ -46,7 +53,7 @@ export default function SnaplensHero() {
                 >
                     <div className="absolute inset-0 bg-white/30 z-10" />
                     <img 
-                        src={slides[current]?.image} 
+                        src={activeSlides[current]?.image} 
                         alt="Slider background" 
                         className="w-full h-full object-cover"
                     />
@@ -105,12 +112,12 @@ export default function SnaplensHero() {
                 </div>
 
                 {/* Bottom Right Thumbnails Slider Control */}
-                {slides.length > 0 && (
+                {activeSlides.length > 0 && (
                     <div className="absolute right-4 md:right-8 bottom-8 md:bottom-12 hidden md:flex flex-col items-center">
                         <div className="flex items-center gap-3">
-                            {slides.map((slide, idx) => (
+                            {activeSlides.map((slide, idx) => (
                                 <button 
-                                    key={slide.id}
+                                    key={slide.id || idx}
                                     onClick={() => setCurrent(idx)}
                                     className={`relative w-28 h-16 rounded-xl overflow-hidden transition-all duration-500 ${current === idx ? 'ring-2 ring-primary scale-105 shadow-2xl z-10 opacity-100' : 'opacity-40 hover:opacity-100'}`}
                                 >

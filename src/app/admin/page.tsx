@@ -94,7 +94,7 @@ export default function AdminDashboardPage() {
             <div className="flex justify-between items-end">
                 <div className="space-y-1">
                     <h1 className="text-4xl font-serif font-black tracking-tight text-gray-900">Yönetim Paneli</h1>
-                    <p className="text-gray-500 italic text-sm">Snaplens CMS üzerinden tüm fotografçılık içeriklerini yönetin.</p>
+                    <p className="text-gray-500 italic text-sm">SDF CMS üzerinden tüm fotografçılık içeriklerini yönetin.</p>
                 </div>
                 <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] bg-white px-5 py-2.5 rounded-full border border-black/5 shadow-sm">
                     {new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
