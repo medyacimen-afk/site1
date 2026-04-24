@@ -8,8 +8,8 @@ export default function PortfolioGrid() {
     const { portfolio, loading } = useContent()
 
     const homeItems = portfolio.filter(item => item.isHome).length > 0
-        ? portfolio.filter(item => item.isHome).slice(0, 6)
-        : portfolio.slice(0, 4)
+        ? portfolio.filter(item => item.isHome).slice(0, 12)
+        : portfolio.slice(0, 8)
 
     if (loading) return (
         <div className="py-20 flex justify-center">
@@ -23,34 +23,34 @@ export default function PortfolioGrid() {
     return (
         <section className="py-24 bg-white overflow-hidden">
             <div className="container mx-auto px-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                     {homeItems.map((item, idx) => (
                         <motion.div
                             key={item.id}
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ duration: 0.8, delay: idx * 0.1 }}
+                            transition={{ duration: 0.8, delay: idx * 0.05 }}
                             className="group relative"
                         >
-                            <div className="relative aspect-[4/5] md:aspect-[5/6] overflow-hidden rounded-2xl md:rounded-[2.5rem] bg-slate-100">
+                            <div className="relative aspect-square md:aspect-[4/5] overflow-hidden rounded-xl md:rounded-3xl bg-slate-100">
                                 <img 
                                     src={item.image} 
                                     alt={item.title} 
-                                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 grayscale hover:grayscale-0 opacity-80 group-hover:opacity-100"
+                                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 grayscale hover:grayscale-0 opacity-90 group-hover:opacity-100"
                                 />
                                 {/* Overlay Gradient */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-40 group-hover:opacity-80 transition-opacity" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-40 group-hover:opacity-90 transition-opacity" />
                                 
-                                <div className="absolute top-8 right-8 w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/20 transform translate-x-4 translate-y-[-4] opacity-0 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                                    <ArrowUpRight className="w-5 h-5" />
+                                <div className="absolute top-4 right-4 w-8 h-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/20 transform translate-x-2 translate-y-[-2] opacity-0 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                                    <ArrowUpRight className="w-4 h-4" />
                                 </div>
 
-                                <div className="absolute bottom-10 left-10">
-                                    <span className="text-primary text-xs font-bold tracking-[0.3em] uppercase mb-3 block">
+                                <div className="absolute bottom-6 left-6 right-6">
+                                    <span className="text-primary text-[10px] font-bold tracking-[0.2em] uppercase mb-1 block">
                                         {item.category}
                                     </span>
-                                    <h3 className="text-2xl md:text-3xl font-sans text-white font-medium tracking-tight">
+                                    <h3 className="text-sm md:text-lg font-sans text-white font-medium tracking-tight line-clamp-1">
                                         {item.title}
                                     </h3>
                                 </div>
