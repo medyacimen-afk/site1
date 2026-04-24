@@ -112,8 +112,8 @@ export default function Footer() {
                         © {new Date().getFullYear()} SİVAS DÜĞÜN FOTOĞRAFÇISI®. TÜM HAKLARI SAKLIDIR.
                     </span>
                     <div className="flex items-center gap-8 text-foreground/30 text-[10px] uppercase tracking-[0.2em]">
-                        <Link href="#" className="hover:text-primary transition-colors">GİZLİLİK POLİTİKASI</Link>
-                        <Link href="#" className="hover:text-primary transition-colors">KULLANIM KOŞULLARI</Link>
+                        <Link href="/gizlilik-politikasi" className="hover:text-primary transition-colors">GİZLİLİK POLİTİKASI</Link>
+                        <Link href="/kullanim-kosullari" className="hover:text-primary transition-colors">KULLANIM KOŞULLARI</Link>
                     </div>
                 </div>
             </div>
