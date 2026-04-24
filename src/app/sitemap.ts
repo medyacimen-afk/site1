@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next'
-import { districts, services, slugify } from '@/lib/seo-data'
+import { districts, services, slugify, plateaus, plateauQueries } from '@/lib/seo-data'
 
 export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://sivasdugunfotografcisi.com'
@@ -19,17 +19,34 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority: 1,
     }))
 
-    // Dynamic SEO Pages (All Districts + Selected Services)
-    const seoPages: MetadataRoute.Sitemap = []
-
+    // 1. Dynamic SEO Pages (All Districts + All Services)
+    const districtPages: MetadataRoute.Sitemap = []
     districts.forEach((district) => {
-        // Essential and Commercial services for every district
-        const relevantServices = services.filter(s => s.category === 'Ticari' || s.category === 'Temel');
-        
-        relevantServices.forEach((service) => {
-            const slug = `${slugify(district.name)}-${service.id}`
-            seoPages.push({
-                url: `${baseUrl}/${slug}`,
+        services.forEach((service) => {
+            districtPages.push({
+                url: `${baseUrl}/${slugify(district.name)}-${service.id}`,
+                lastModified: new Date(),
+                changeFrequency: 'weekly' as const,
+                priority: 0.7,
+            })
+        })
+    })
+
+    // 2. Dynamic Plateau Pages (All Plateaus + All Queries)
+    const plateauPages: MetadataRoute.Sitemap = []
+    plateaus.forEach((plateau) => {
+        // Base plateau page
+        plateauPages.push({
+            url: `${baseUrl}/${plateau.id}`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly' as const,
+            priority: 0.9,
+        })
+
+        // Plateau + Query combinations
+        plateauQueries.forEach((query) => {
+            plateauPages.push({
+                url: `${baseUrl}/${plateau.id}-${query.id}`,
                 lastModified: new Date(),
                 changeFrequency: 'weekly' as const,
                 priority: 0.8,
@@ -37,5 +54,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
         })
     })
 
-    return [...mainPages, ...seoPages]
+    return [...mainPages, ...districtPages, ...plateauPages]
 }
