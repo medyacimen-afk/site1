@@ -55,24 +55,40 @@ export function useContent() {
 
         // Slides
         const unsubSlides = onSnapshot(collection(db, 'hero_slides'), (snap) => {
-            setSlides(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+            setSlides(snap.docs.map(d => {
+                const data = d.data();
+                if (data.image) data.image = data.image.replace(/fotoğraflar/i, 'portfolio-photos');
+                return { id: d.id, ...data };
+            }))
         })
 
         // Portfolio
         const unsubPortfolio = onSnapshot(query(collection(db, 'portfolio'), orderBy('createdAt', 'desc')), (snap) => {
-            setPortfolio(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+            setPortfolio(snap.docs.map(d => {
+                const data = d.data();
+                if (data.image) data.image = data.image.replace(/fotoğraflar/i, 'portfolio-photos');
+                return { id: d.id, ...data };
+            }))
         })
 
         // Services and Extras
         const unsubServices = onSnapshot(collection(db, 'services'), (snap) => {
-            const allServices = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+            const allServices = snap.docs.map(d => {
+                const data = d.data();
+                if (data.image) data.image = data.image.replace(/fotoğraflar/i, 'portfolio-photos');
+                return { id: d.id, ...data };
+            })
             setServices(allServices.filter((s: any) => !s.isExtra))
             setExtras(allServices.filter((s: any) => s.isExtra))
         })
 
         // Team
         const unsubTeam = onSnapshot(collection(db, 'team'), (snap) => {
-            setTeam(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+            setTeam(snap.docs.map(d => {
+                const data = d.data();
+                if (data.image) data.image = data.image.replace(/fotoğraflar/i, 'portfolio-photos');
+                return { id: d.id, ...data };
+            }))
         })
 
         // Features
