@@ -1,6 +1,7 @@
 "use client"
 import React, { useEffect } from 'react'
 import { motion, useScroll, useSpring } from 'framer-motion'
+import Link from 'next/link'
 
 import SnaplensHero from '@/components/snaplens/SnaplensHero'
 import AboutSection from '@/components/snaplens/AboutSection'
@@ -53,13 +54,15 @@ export default function Home() {
                             Bizimle İletişime Geçin
                         </h2>
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="w-full sm:w-auto px-10 py-4 bg-primary text-primary-foreground text-sm font-semibold transition-all shadow-xl hover:shadow-2xl"
-                            >
-                                Rezervasyon Yap
-                            </motion.button>
+                            <Link href="/online-rezervasyon" className="w-full sm:w-auto">
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="w-full sm:w-auto px-10 py-4 bg-primary text-primary-foreground text-sm font-semibold transition-all shadow-xl hover:shadow-2xl"
+                                >
+                                    Rezervasyon Yap
+                                </motion.button>
+                            </Link>
                         </div>
                     </motion.div>
                 </div>
