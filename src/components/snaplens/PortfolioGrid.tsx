@@ -7,9 +7,16 @@ import { useContent } from '@/hooks/useContent'
 export default function PortfolioGrid() {
     const { portfolio, loading } = useContent()
 
-    const homeItems = portfolio.filter(item => item.isHome).length > 0
-        ? portfolio.filter(item => item.isHome).slice(0, 12)
-        : portfolio.slice(0, 8)
+    const homeItems = React.useMemo(() => {
+        const source = portfolio.filter(item => item.isHome).length > 0
+            ? portfolio.filter(item => item.isHome)
+            : portfolio;
+        
+        // Rastgele karıştırıp seçelim (Variety için)
+        return [...source]
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 8);
+    }, [portfolio]);
 
     if (loading) return (
         <div className="py-20 flex justify-center">
