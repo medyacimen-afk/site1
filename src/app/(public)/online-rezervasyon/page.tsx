@@ -215,9 +215,9 @@ function ReservationContent() {
             } else {
                 alert('Ödeme başlatılamadı: ' + (result.errorMessage || 'Unknown Error'))
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error(error)
-            alert('Bir hata oluştu.')
+            alert('Bir hata oluştu: ' + (error?.message || error))
         } finally {
             setLoading(false)
         }
