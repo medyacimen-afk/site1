@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect } from 'react'
 import { Plus, Trash2, Edit, Save, Loader2, X, UploadCloud } from 'lucide-react'
-import { db } from '@/lib/firebase'
+import { db, auth } from '@/lib/firebase'
 import { collection, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore'
 import { uploadImage } from '@/lib/upload'
 import { toast } from 'sonner'
@@ -43,6 +43,10 @@ export default function AdminServicesPage() {
 
         setUploading(true)
         try {
+            if (!auth.currentUser) {
+                throw new Error("Oturumunuz bulunamadı. Lütfen sayfayı yenileyip tekrar giriş yapın (Missing or insufficient permissions).");
+            }
+            
             const url = await uploadImage(selectedFile, 'services')
             const docRef = await addDoc(collection(db, 'services'), {
                 title: newTitle,
@@ -56,8 +60,8 @@ export default function AdminServicesPage() {
             setShowAdd(false)
             setNewTitle(""); setNewDesc(""); setNewPrice(""); setNewDiscountedPrice(""); setNewIsExtra(false); setSelectedFile(null)
             toast.success("Yeni hizmet başarıyla eklendi.")
-        } catch (error) {
-            console.error(error); toast.error("Hizmet eklenemedi.")
+        } catch (error: any) {
+            console.error(error); toast.error(error?.message || "Hizmet eklenemedi.")
         } finally {
             setUploading(false)
         }
@@ -69,8 +73,8 @@ export default function AdminServicesPage() {
             await deleteDoc(doc(db, 'services', id))
             setItems(items.filter(i => i.id !== id))
             toast.success("Hizmet silindi.")
-        } catch (error) {
-            console.error(error); toast.error("Silme işlemi başarısız.")
+        } catch (error: any) {
+            console.error(error); toast.error("Silme işlemi başarısız: " + (error?.message || ""))
         }
     }
 

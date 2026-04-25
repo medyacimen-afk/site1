@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { LayoutDashboard, Image as ImageIcon, Users, Briefcase, Camera, Menu, X, LogOut, Plus, ClipboardList, FileText, Settings, Package, PlayCircle } from 'lucide-react'
+import { Toaster } from 'sonner'
 
 const navItems = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -90,6 +91,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 {/* Page Content */}
                 <main className="flex-1 overflow-y-auto p-4 lg:p-8">
                     {children}
+                    <Toaster position="bottom-right" richColors />
                 </main>
             </div>
             
