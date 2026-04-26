@@ -191,7 +191,21 @@ function ReservationContent() {
                 })
             })
 
-            const result = await response.json()
+            let result;
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                result = await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Non-JSON response from API:", text);
+                alert("Ödeme sistemi sunucusundan geçersiz bir yanıt alındı. Vercel üzerinde Iyzico API anahtarlarının girildiğinden emin olun.");
+                return;
+            }
+
+            if (!response.ok) {
+                 alert('Ödeme başlatılamadı: ' + (result?.errorMessage || result?.error || 'Bilinmeyen Hata'));
+                 return;
+            }
 
             if (result.status === 'success' && result.checkoutFormContent) {
                 // Iyzico formunu inject et
@@ -216,8 +230,8 @@ function ReservationContent() {
                 alert('Ödeme başlatılamadı: ' + (result.errorMessage || 'Unknown Error'))
             }
         } catch (error: any) {
-            console.error(error)
-            alert('Bir hata oluştu: ' + (error?.message || error))
+            console.error("Booking Error:", error)
+            alert('Bir hata oluştu. Hata detayı: ' + JSON.stringify(error, Object.getOwnPropertyNames(error)))
         } finally {
             setLoading(false)
         }

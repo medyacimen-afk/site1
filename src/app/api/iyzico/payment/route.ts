@@ -69,7 +69,7 @@ export async function POST(request: Request) {
             iyzipay.checkoutFormInitialize.create(data, (err: any, result: any) => {
                 if (err) {
                     console.error('Iyzico Error:', err)
-                    resolve(NextResponse.json({ error: err }, { status: 500 }))
+                    resolve(NextResponse.json({ error: err?.message || 'Iyzico API Error' }, { status: 500 }))
                 } else {
                     resolve(NextResponse.json(result))
                 }
