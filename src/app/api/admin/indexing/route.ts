@@ -11,10 +11,21 @@ export async function POST(request: Request) {
 
     const credentialsString = process.env.GOOGLE_INDEXING_SERVICE_ACCOUNT;
     if (!credentialsString) {
-      return NextResponse.json({ error: 'Google Indexing credentials not configured' }, { status: 500 });
+      return NextResponse.json({ 
+        error: 'GOOGLE_INDEXING_SERVICE_ACCOUNT ortam değişkeni Vercel\'e eklenmemiş! Vercel Dashboard > Settings > Environment Variables kısmına ekleyin.',
+        hint: 'env_missing'
+      }, { status: 500 });
     }
 
-    const credentials = JSON.parse(credentialsString);
+    let credentials;
+    try {
+      credentials = JSON.parse(credentialsString);
+    } catch (parseError) {
+      return NextResponse.json({ 
+        error: 'Service account JSON parse hatası. Vercel\'deki değeri kontrol edin.',
+        hint: 'json_parse_error'
+      }, { status: 500 });
+    }
 
     const auth = new google.auth.JWT({
       email: credentials.client_email,
@@ -39,9 +50,17 @@ export async function POST(request: Request) {
     });
   } catch (error: any) {
     console.error('Indexing API Error:', error);
+    
+    // Google API'den gelen spesifik hata mesajları
+    const googleError = error.response?.data?.error;
+    const errorMessage = googleError?.message || error.message || 'Internal Server Error';
+    const errorCode = googleError?.code || error.code;
+    
     return NextResponse.json({ 
-      error: error.message || 'Internal Server Error',
-      details: error.response?.data || null
+      error: errorMessage,
+      code: errorCode,
+      details: googleError || null,
+      hint: errorCode === 403 ? 'Google Search Console\'da bu siteyi sahip olarak doğrulamanız gerekiyor.' : null
     }, { status: 500 });
   }
 }
