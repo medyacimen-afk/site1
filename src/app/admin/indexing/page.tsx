@@ -89,16 +89,19 @@ export default function IndexingPage() {
                 return true
             } else {
                 const errMsg = data.error || 'Hata'
-                if (!silent) {
-                    toast.error(errMsg)
-                    setErrorDetail(errMsg + (data.hint ? `\n\nİpucu: ${data.hint}` : ''))
-                }
+                const hint = data.hint || null
+                const fullMsg = errMsg + (hint ? `\n\nİpucu: ${hint}` : '') + (data.details ? `\n\nDetay: ${JSON.stringify(data.details)}` : '')
+                // Her zaman hata detayını göster (silent olsa bile)
+                setErrorDetail(fullMsg)
+                if (!silent) toast.error(errMsg)
                 setResults(prev => [{ url: targetUrl, status: 'error', error: errMsg, time: new Date().toLocaleTimeString() }, ...prev])
                 return false
             }
         } catch (error) {
-            if (!silent) toast.error('Bağlantı hatası')
-            setResults(prev => [{ url: targetUrl, status: 'error', error: 'Bağlantı hatası', time: new Date().toLocaleTimeString() }, ...prev])
+            const msg = 'Bağlantı hatası'
+            setErrorDetail(msg)
+            if (!silent) toast.error(msg)
+            setResults(prev => [{ url: targetUrl, status: 'error', error: msg, time: new Date().toLocaleTimeString() }, ...prev])
             return false
         } finally {
             if (!silent) setLoading(false)
