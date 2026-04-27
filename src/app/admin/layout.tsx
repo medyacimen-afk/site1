@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { LayoutDashboard, Image as ImageIcon, Users, Briefcase, Camera, Menu, X, LogOut, Plus, ClipboardList, FileText, Settings, Package, PlayCircle } from 'lucide-react'
+import { LayoutDashboard, Image as ImageIcon, Users, Briefcase, Camera, Menu, X, LogOut, Plus, ClipboardList, FileText, Settings, Package, PlayCircle, Search } from 'lucide-react'
 import { Toaster } from 'sonner'
 
 const navItems = [
@@ -13,6 +13,7 @@ const navItems = [
     { name: 'Düğün Klipleri', href: '/admin/videos', icon: PlayCircle },
     { name: 'Ekibimiz', href: '/admin/team', icon: Users },
     { name: 'Blog Yazıları', href: '/admin/blog', icon: FileText },
+    { name: 'Web Indexleme', href: '/admin/indexing', icon: Search },
     { name: 'Rezervasyonlar', href: '/admin/bookings', icon: ClipboardList },
     { name: 'Ayarlar', href: '/admin/settings', icon: Settings },
 ]
