@@ -16,13 +16,11 @@ export async function POST(request: Request) {
 
     const credentials = JSON.parse(credentialsString);
 
-    const auth = new google.auth.JWT(
-      credentials.client_email,
-      undefined,
-      credentials.private_key.replace(/\\n/g, '\n'),
-      ['https://www.googleapis.com/auth/indexing'],
-      undefined
-    );
+    const auth = new google.auth.JWT({
+      email: credentials.client_email,
+      key: credentials.private_key.replace(/\\n/g, '\n'),
+      scopes: ['https://www.googleapis.com/auth/indexing'],
+    });
 
     const indexing = google.indexing('v3');
 
