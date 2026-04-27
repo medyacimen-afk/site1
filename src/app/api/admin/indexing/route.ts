@@ -27,9 +27,15 @@ export async function POST(request: Request) {
       }, { status: 500 });
     }
 
+    // Ensure private key is correctly formatted regardless of how it was injected
+    let privateKey = credentials.private_key || '';
+    if (!privateKey.includes('-----BEGIN PRIVATE KEY-----\n')) {
+      privateKey = privateKey.replace(/\\n/g, '\n');
+    }
+
     const auth = new google.auth.JWT({
       email: credentials.client_email,
-      key: credentials.private_key.replace(/\\n/g, '\n'),
+      key: privateKey,
       scopes: ['https://www.googleapis.com/auth/indexing'],
     });
 
