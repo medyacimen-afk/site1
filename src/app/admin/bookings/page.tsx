@@ -1,9 +1,9 @@
 "use client"
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Calendar, Phone, Mail, Clock, CheckCircle2, XCircle, MoreVertical, Loader2, MessageCircle } from 'lucide-react'
+import { Calendar, Phone, Mail, Clock, CheckCircle2, XCircle, Loader2, MessageCircle, Trash2 } from 'lucide-react'
 import { db } from '@/lib/firebase'
-import { collection, getDocs, query, orderBy, updateDoc, doc } from 'firebase/firestore'
+import { collection, getDocs, query, orderBy, updateDoc, doc, deleteDoc } from 'firebase/firestore'
 import { format } from 'date-fns'
 import { tr } from 'date-fns/locale'
 import { toast } from 'sonner'
@@ -11,6 +11,7 @@ import { toast } from 'sonner'
 export default function AdminBookingsPage() {
     const [bookings, setBookings] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
+    const [deletingId, setDeletingId] = useState<string | null>(null)
 
     useEffect(() => {
         fetchBookings()
@@ -39,6 +40,20 @@ export default function AdminBookingsPage() {
         }
     }
 
+    const deleteBooking = async (id: string) => {
+        if (!window.confirm('Bu rezervasyonu silmek istediğinize emin misiniz? Bu işlem geri alınamaz.')) return
+        setDeletingId(id)
+        try {
+            await deleteDoc(doc(db, 'bookings', id))
+            setBookings(bookings.filter(b => b.id !== id))
+            toast.success('Rezervasyon silindi.')
+        } catch (error) {
+            console.error(error); toast.error("Silme işlemi başarısız.")
+        } finally {
+            setDeletingId(null)
+        }
+    }
+
     const getStatusBadge = (status: string) => {
         switch (status) {
             case 'approved': return <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase">Onaylandı</span>
@@ -56,7 +71,10 @@ export default function AdminBookingsPage() {
                     <h1 className="text-2xl font-bold tracking-tight text-gray-900">Rezervasyon Takibi</h1>
                     <p className="text-gray-500">Gelen online rezervasyon taleplerini ve ödemelerini buradan yönetin.</p>
                 </div>
-                <button onClick={fetchBookings} className="text-sm font-semibold text-[#D49A73] hover:underline">Listeyi Yenile</button>
+                <div className="flex items-center gap-3">
+                    <span className="text-xs text-gray-400 font-medium">{bookings.length} rezervasyon</span>
+                    <button onClick={fetchBookings} className="text-sm font-semibold text-[#D49A73] hover:underline">Listeyi Yenile</button>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 gap-6">
@@ -122,13 +140,24 @@ export default function AdminBookingsPage() {
                                     <XCircle className="w-5 h-5" />
                                 </button>
                                 <a 
-                                    href={`https://wa.me/90${booking.clientPhone?.replace(/\D/g, '')}`} 
+                                    href={`https://wa.me/90${(booking.phone || booking.clientPhone)?.replace(/\D/g, '')}`} 
                                     target="_blank" 
                                     className="p-3 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm"
                                     title="WhatsApp'tan Yaz"
                                 >
                                     <MessageCircle className="w-5 h-5" />
                                 </a>
+                                <button 
+                                    onClick={() => deleteBooking(booking.id)}
+                                    disabled={deletingId === booking.id}
+                                    className="p-3 bg-gray-100 text-gray-500 rounded-xl hover:bg-gray-800 hover:text-white transition-all shadow-sm disabled:opacity-50"
+                                    title="Rezervasyonu Sil"
+                                >
+                                    {deletingId === booking.id 
+                                        ? <Loader2 className="w-5 h-5 animate-spin" />
+                                        : <Trash2 className="w-5 h-5" />
+                                    }
+                                </button>
                             </div>
                         </div>
                     </motion.div>

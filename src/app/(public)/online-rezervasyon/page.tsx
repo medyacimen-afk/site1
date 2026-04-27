@@ -208,26 +208,29 @@ function ReservationContent() {
             }
 
             if (result.status === 'success' && result.checkoutFormContent) {
-                // Iyzico formunu inject et
-                const div = document.createElement('div')
-                div.id = 'iyzico-payment-form'
-                div.innerHTML = result.checkoutFormContent
-                document.body.appendChild(div)
+                // Iyzico'nun ödeme sayfasını tam ekran overlay olarak göster
+                const overlay = document.createElement('div')
+                overlay.id = 'iyzico-overlay'
+                overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:white;z-index:99999;overflow:auto;'
+                overlay.innerHTML = result.checkoutFormContent
+                document.body.appendChild(overlay)
                 
-                // Scriptleri çalıştır
-                const scripts = div.getElementsByTagName('script')
-                for (let i = 0; i < scripts.length; i++) {
-                    const script = document.createElement('script')
-                    script.type = 'text/javascript'
-                    if (scripts[i].src) {
-                        script.src = scripts[i].src
+                // Tüm scriptleri sırayla çalıştır
+                const scripts = overlay.querySelectorAll('script')
+                for (const oldScript of Array.from(scripts)) {
+                    const newScript = document.createElement('script')
+                    if (oldScript.src) {
+                        newScript.src = oldScript.src
+                        newScript.async = false
                     } else {
-                        script.innerHTML = scripts[i].innerHTML
+                        newScript.textContent = oldScript.textContent
                     }
-                    document.head.appendChild(script)
+                    document.head.appendChild(newScript)
                 }
             } else {
-                alert('Ödeme başlatılamadı: ' + (result.errorMessage || 'Unknown Error'))
+                const errMsg = result.errorMessage || result.errorCode || 'Bilinmeyen hata'
+                console.error('Iyzico API yanıtı:', result)
+                alert(`Ödeme başlatılamadı: ${errMsg}`)
             }
         } catch (error: any) {
             console.error("Booking Error:", error)
