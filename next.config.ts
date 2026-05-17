@@ -9,7 +9,10 @@ const nextConfig: NextConfig = {
             },
         ],
     },
-    serverExternalPackages: ['iyzipay'],
+    serverExternalPackages: ['iyzipay', 'firebase-admin'],
+    outputFileTracingIncludes: {
+        '/api/iyzico/**/*': ['./node_modules/iyzipay/lib/**/*'],
+    },
 };
 
 export default nextConfig;
