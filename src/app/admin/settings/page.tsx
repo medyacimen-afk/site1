@@ -88,12 +88,12 @@ export default function AdminSettingsPage() {
                             </div>
                         </div>
                         <div className="space-y-3">
-                            <label className="text-[11px] font-bold uppercase text-gray-400 ml-2 tracking-widest">Banka Adı</label>
+                            <label className="text-[11px] font-bold uppercase text-gray-400 ml-2 tracking-widest">EFT İndirim Oranı (%)</label>
                             <div className="relative">
                                 <Star className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300" />
-                                <input 
-                                    type="number" 
-                                    required 
+                                <input
+                                    type="number"
+                                    required
                                     value={settings.eftDiscount} 
                                     onChange={(e) => setSettings({...settings, eftDiscount: e.target.value})} 
                                     className="w-full bg-gray-50/50 border-2 border-gray-100 rounded-2xl p-5 pl-14 outline-none focus:border-[#D49A73] transition-all font-bold" 

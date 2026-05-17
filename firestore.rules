@@ -7,7 +7,13 @@ service cloud.firestore {
       allow read: if true;
       allow write: if request.auth != null;
     }
-    
+
+    // Rezervasyonlar: herkes oluşturabilir (müşteri girişi yok), yalnızca admin okuyup düzenleyebilir
+    match /bookings/{document=**} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+
     // Diğer her şey için kullanıcı girişi gerekir
     match /{document=**} {
       allow read: if true;

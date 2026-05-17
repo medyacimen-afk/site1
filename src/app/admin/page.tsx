@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Camera, Users, Image as ImageIcon, Briefcase, Loader2, Wallet, TrendingUp, Clock, CheckCircle2, XCircle, BarChart3, ChevronRight } from 'lucide-react'
 import { db } from '@/lib/firebase'
-import { collection, getDocs, query, orderBy, limit, getCountFromServer } from 'firebase/firestore'
+import { collection, getDocs, query, orderBy, getCountFromServer } from 'firebase/firestore'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { tr } from 'date-fns/locale'
@@ -36,7 +36,7 @@ export default function AdminDashboardPage() {
                 getCountFromServer(collection(db, 'portfolio')),
                 getCountFromServer(collection(db, 'services')),
                 getCountFromServer(collection(db, 'team')),
-                getDocs(query(collection(db, 'bookings'), orderBy('createdAt', 'desc'), limit(10)))
+                getDocs(query(collection(db, 'bookings'), orderBy('createdAt', 'desc')))
             ])
 
             setStats([
@@ -46,19 +46,13 @@ export default function AdminDashboardPage() {
                 { title: "Ekip Üyeleri", value: teamCount.data().count.toString(), icon: Users, color: "bg-purple-50 text-purple-600", link: "/admin/team" },
             ])
 
-            // Financial Calculations
             let earned = 0;
             let pending = 0;
             let approvedC = 0;
             let pendingC = 0;
             let cancelledC = 0;
 
-            const allBookings = bookingsSnap.docs.map(d => ({ id: d.id, ...d.data() }))
-            
-            // For correct totals we'd ideally fetch all bookings, but for dashboard let's assume we fetch enough or use a separate full fetch if needed. 
-            // Better: fetch all bookings for stats since count is small, limit only for 'recent' list.
-            const fullBookingsSnap = await getDocs(collection(db, 'bookings'))
-            fullBookingsSnap.docs.forEach(doc => {
+            bookingsSnap.docs.forEach(doc => {
                 const data = doc.data()
                 const amount = Number(data.totalAmount) || 0
                 if (data.status === 'approved') {
@@ -80,7 +74,7 @@ export default function AdminDashboardPage() {
                 cancelledCount: cancelledC
             })
 
-            setRecentBookings(allBookings.slice(0, 5))
+            setRecentBookings(bookingsSnap.docs.slice(0, 5).map(d => ({ id: d.id, ...d.data() })))
 
         } catch (error) {
             console.error(error)

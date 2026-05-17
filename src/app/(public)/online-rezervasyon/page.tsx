@@ -180,6 +180,20 @@ function ReservationContent() {
             }
 
             // 2. Iyzico Ödemesini Başlat (Kart ise)
+            // Sepet kalemleri: indirimli fiyat varsa onu kullan, gün batımı ücretini ekle
+            const effectiveItems = [
+                ...selectedPackages.map(p => ({
+                    id: p.id,
+                    title: p.title,
+                    price: p.discountedPrice ? Number(p.discountedPrice) : Number(p.price || 0)
+                })),
+                ...selectedExtras.map(e => ({
+                    id: e.id,
+                    title: e.title,
+                    price: Number(e.price || 0)
+                })),
+                ...(sunsetFee > 0 ? [{ id: 'sunset-fee', title: 'Gün Batımı Farkı', price: sunsetFee }] : [])
+            ]
             const response = await fetch('/api/iyzico/payment', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -187,7 +201,7 @@ function ReservationContent() {
                     amount: totalAmount,
                     bookingId: docRef.id,
                     user: userInfo,
-                    items: [...selectedPackages, ...selectedExtras]
+                    items: effectiveItems
                 })
             })
 
@@ -317,21 +331,25 @@ function ReservationContent() {
                                                 {['Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct', 'Pz'].map(d => (
                                                     <div key={d} className="text-center text-[10px] uppercase font-black text-gray-300 py-2 tracking-widest">{d}</div>
                                                 ))}
-                                                {Array.from({ length: 31 }).map((_, i) => { 
-                                                    const day = new Date(2026, selectedMonth || 0, i + 1); 
-                                                    if (day.getMonth() !== (selectedMonth || 0)) return null; 
-                                                    const isSelected = selectedDate && isSameDay(day, selectedDate); 
-                                                    const isPast = isBefore(day, startOfToday()); 
+                                                {/* Ayın ilk günü hangi haftanın kaçıncı günü ise o kadar boş hücre ekle (Pzt=0 … Paz=6) */}
+                                                {Array.from({ length: (() => { const d = new Date(2026, selectedMonth || 0, 1).getDay(); return d === 0 ? 6 : d - 1 })() }).map((_, i) => (
+                                                    <div key={`empty-${i}`} />
+                                                ))}
+                                                {Array.from({ length: 31 }).map((_, i) => {
+                                                    const day = new Date(2026, selectedMonth || 0, i + 1);
+                                                    if (day.getMonth() !== (selectedMonth || 0)) return null;
+                                                    const isSelected = selectedDate && isSameDay(day, selectedDate);
+                                                    const isPast = isBefore(day, startOfToday());
                                                     return (
-                                                        <button 
-                                                            key={i} 
-                                                            disabled={isPast} 
-                                                            onClick={() => setSelectedDate(day)} 
+                                                        <button
+                                                            key={i}
+                                                            disabled={isPast}
+                                                            onClick={() => setSelectedDate(day)}
                                                             className={`h-11 md:h-12 w-full rounded-2xl flex items-center justify-center text-sm transition-all duration-300 ${isSelected ? 'bg-[#D49A73] text-white shadow-xl shadow-orange-200 font-bold scale-110' : isPast ? 'text-gray-100 cursor-not-allowed' : 'text-gray-800 hover:bg-gray-50 bg-white border border-black/5 hover:border-[#D49A73]/20'}`}
                                                         >
                                                             {i + 1}
                                                         </button>
-                                                    ) 
+                                                    )
                                                 })}
                                             </div>
                                         </div>
