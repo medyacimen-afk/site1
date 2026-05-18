@@ -11,7 +11,8 @@ const nextConfig: NextConfig = {
     },
     serverExternalPackages: ['iyzipay', 'firebase-admin'],
     outputFileTracingIncludes: {
-        '/api/iyzico/**/*': ['./node_modules/iyzipay/lib/**/*'],
+        '/api/iyzico/payment': ['./node_modules/iyzipay/**/*'],
+        '/api/iyzico/callback': ['./node_modules/iyzipay/**/*'],
     },
 };
 

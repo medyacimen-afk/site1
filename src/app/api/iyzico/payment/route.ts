@@ -1,19 +1,41 @@
 import { NextResponse } from 'next/server'
-const Iyzipay = require('iyzipay')
-
-// Bu bilgiler .env.local dosyasından alınmalıdır.
-const iyzipay = new Iyzipay({
-    apiKey: process.env.IYZICO_API_KEY || 'sandbox-key',
-    secretKey: process.env.IYZICO_SECRET_KEY || 'sandbox-secret',
-    uri: process.env.IYZICO_BASE_URL || 'https://sandbox-api.iyzipay.com'
-})
 
 export async function POST(request: Request) {
     try {
+        // Iyzipay'i function icinde lazy load et — modul-level crash olursa
+        // tum route HTML 500 doner, JSON gelmez. Boylece her durumda JSON donebilir.
+        let Iyzipay: any
+        try {
+            Iyzipay = require('iyzipay')
+        } catch (loadErr: any) {
+            console.error('Iyzipay module load failed:', loadErr)
+            return NextResponse.json({
+                error: 'Iyzipay paketi yuklenemedi',
+                detail: loadErr?.message || String(loadErr),
+                code: loadErr?.code
+            }, { status: 500 })
+        }
+
+        if (!process.env.IYZICO_API_KEY || !process.env.IYZICO_SECRET_KEY || !process.env.IYZICO_BASE_URL) {
+            return NextResponse.json({
+                error: 'Iyzico ortam degiskenleri eksik',
+                missing: {
+                    apiKey: !process.env.IYZICO_API_KEY,
+                    secretKey: !process.env.IYZICO_SECRET_KEY,
+                    baseUrl: !process.env.IYZICO_BASE_URL
+                }
+            }, { status: 500 })
+        }
+
+        const iyzipay = new Iyzipay({
+            apiKey: process.env.IYZICO_API_KEY,
+            secretKey: process.env.IYZICO_SECRET_KEY,
+            uri: process.env.IYZICO_BASE_URL
+        })
+
         const body = await request.json()
         const { amount, bookingId, user, items } = body
 
-        // Fiyatı iyzico'nun istediği formatta (string ve . ile ayrılmış) alalım
         const formattedPrice = Number(amount).toFixed(2)
 
         const data = {
@@ -30,7 +52,7 @@ export async function POST(request: Request) {
                 id: `USER-${Date.now()}`,
                 name: user.brideName || 'Gelin',
                 surname: user.groomName || 'Damat',
-                gsmNumber: user.phone.replace(/\s/g, ''),
+                gsmNumber: (user.phone || '').replace(/\s/g, ''),
                 email: user.email || 'bilgi@sivasdugunfotografcisi.com',
                 identityNumber: '11111111111',
                 lastLoginDate: '2023-10-05 12:43:35',
@@ -56,7 +78,7 @@ export async function POST(request: Request) {
                 zipCode: '58000'
             },
             basketItems: items.map((item: any) => ({
-                id: item.id,
+                id: String(item.id),
                 name: item.title,
                 category1: 'Photography',
                 category2: 'Wedding',
@@ -66,18 +88,32 @@ export async function POST(request: Request) {
         }
 
         return new Promise<NextResponse>((resolve) => {
-            iyzipay.checkoutFormInitialize.create(data, (err: any, result: any) => {
-                if (err) {
-                    console.error('Iyzico Error:', err)
-                    resolve(NextResponse.json({ error: err?.message || 'Iyzico API Error' }, { status: 500 }))
-                } else {
-                    resolve(NextResponse.json(result))
-                }
-            })
+            try {
+                iyzipay.checkoutFormInitialize.create(data, (err: any, result: any) => {
+                    if (err) {
+                        console.error('Iyzico create error:', err)
+                        resolve(NextResponse.json({
+                            error: err?.message || err?.errorMessage || 'Iyzico API Error',
+                            detail: err
+                        }, { status: 500 }))
+                    } else {
+                        resolve(NextResponse.json(result))
+                    }
+                })
+            } catch (innerErr: any) {
+                console.error('Iyzico create threw:', innerErr)
+                resolve(NextResponse.json({
+                    error: 'Iyzico create() icinden hata firlattı',
+                    detail: innerErr?.message || String(innerErr)
+                }, { status: 500 }))
+            }
         })
 
     } catch (error: any) {
         console.error('Payment API Exception:', error)
-        return NextResponse.json({ error: error.message }, { status: 500 })
+        return NextResponse.json({
+            error: error?.message || String(error),
+            stack: error?.stack
+        }, { status: 500 })
     }
 }
