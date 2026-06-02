@@ -1,21 +1,8 @@
 import { NextResponse } from 'next/server'
+import { checkoutFormInitialize, IYZICO_BASKET_ITEM_VIRTUAL } from '@/lib/iyzico'
 
 export async function POST(request: Request) {
     try {
-        // Iyzipay'i function icinde lazy load et — modul-level crash olursa
-        // tum route HTML 500 doner, JSON gelmez. Boylece her durumda JSON donebilir.
-        let Iyzipay: any
-        try {
-            Iyzipay = require('iyzipay')
-        } catch (loadErr: any) {
-            console.error('Iyzipay module load failed:', loadErr)
-            return NextResponse.json({
-                error: 'Iyzipay paketi yuklenemedi',
-                detail: loadErr?.message || String(loadErr),
-                code: loadErr?.code
-            }, { status: 500 })
-        }
-
         if (!process.env.IYZICO_API_KEY || !process.env.IYZICO_SECRET_KEY || !process.env.IYZICO_BASE_URL) {
             return NextResponse.json({
                 error: 'Iyzico ortam degiskenleri eksik',
@@ -27,25 +14,16 @@ export async function POST(request: Request) {
             }, { status: 500 })
         }
 
-        const iyzipay = new Iyzipay({
-            apiKey: process.env.IYZICO_API_KEY,
-            secretKey: process.env.IYZICO_SECRET_KEY,
-            uri: process.env.IYZICO_BASE_URL
-        })
-
         const body = await request.json()
         const { amount, bookingId, user, items } = body
 
         const formattedPrice = Number(amount).toFixed(2)
 
-        const data = {
-            locale: Iyzipay.LOCALE.TR,
+        const result = await checkoutFormInitialize({
             conversationId: bookingId,
             price: formattedPrice,
             paidPrice: formattedPrice,
-            currency: Iyzipay.CURRENCY.TL,
             basketId: bookingId,
-            paymentGroup: Iyzipay.PAYMENT_GROUP.PRODUCT,
             callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001'}/api/iyzico/callback`,
             enabledInstallments: [1, 2, 3, 6, 9],
             buyer: {
@@ -82,32 +60,20 @@ export async function POST(request: Request) {
                 name: item.title,
                 category1: 'Photography',
                 category2: 'Wedding',
-                itemType: Iyzipay.BASKET_ITEM_TYPE.VIRTUAL,
+                itemType: IYZICO_BASKET_ITEM_VIRTUAL,
                 price: Number(item.price).toFixed(2)
             }))
+        })
+
+        if (result?.status !== 'success') {
+            console.error('Iyzico initialize error:', result)
+            return NextResponse.json({
+                error: result?.errorMessage || 'Iyzico API Error',
+                detail: result
+            }, { status: 500 })
         }
 
-        return new Promise<NextResponse>((resolve) => {
-            try {
-                iyzipay.checkoutFormInitialize.create(data, (err: any, result: any) => {
-                    if (err) {
-                        console.error('Iyzico create error:', err)
-                        resolve(NextResponse.json({
-                            error: err?.message || err?.errorMessage || 'Iyzico API Error',
-                            detail: err
-                        }, { status: 500 }))
-                    } else {
-                        resolve(NextResponse.json(result))
-                    }
-                })
-            } catch (innerErr: any) {
-                console.error('Iyzico create threw:', innerErr)
-                resolve(NextResponse.json({
-                    error: 'Iyzico create() icinden hata firlattı',
-                    detail: innerErr?.message || String(innerErr)
-                }, { status: 500 }))
-            }
-        })
+        return NextResponse.json(result)
 
     } catch (error: any) {
         console.error('Payment API Exception:', error)
