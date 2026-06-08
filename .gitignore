@@ -42,3 +42,6 @@ next-env.d.ts
 
 .vercel
 .env*.local
+
+src/scripts/new-creds.json
+src/scripts/*.json
