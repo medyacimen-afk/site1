@@ -5,8 +5,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Phone, Mail, MapPin, MessageCircle, Send } from 'lucide-react'
+import { useSiteSettings } from '@/hooks/useSiteSettings'
 
 export default function ContactPage() {
+    const { siteSettings, links } = useSiteSettings()
     return (
         <main className="min-h-screen bg-white pt-40 pb-24">
             <div className="container mx-auto px-4">
@@ -102,8 +104,7 @@ export default function ContactPage() {
                                 <div>
                                     <h4 className="text-foreground font-serif text-xl mb-2">Adresimiz</h4>
                                     <p className="text-foreground/50 font-light leading-relaxed">
-                                        Camii Kebir Mah. Selçuklu Sok. Yeşil Rize Apt. Kat 1 No: 3 <br />
-                                        Merkez, Sivas (Çifte Minareli Medrese Yanı)
+                                        {siteSettings.address || 'Adres bilgisi için admin panelini kullanın'}
                                     </p>
                                 </div>
                             </div>
@@ -114,7 +115,9 @@ export default function ContactPage() {
                                 </div>
                                 <div>
                                     <h4 className="text-foreground font-serif text-xl mb-2">Telefon</h4>
-                                    <p className="text-foreground/50 font-light leading-relaxed">0532 407 15 63</p>
+                                    <a href={links.phone} className="text-foreground/50 font-light leading-relaxed hover:text-primary transition-colors">
+                                        {siteSettings.phone || 'Telefon girilmedi'}
+                                    </a>
                                 </div>
                             </div>
 
@@ -124,7 +127,9 @@ export default function ContactPage() {
                                 </div>
                                 <div>
                                     <h4 className="text-foreground font-serif text-xl mb-2">E-Posta</h4>
-                                    <p className="text-foreground/50 font-light leading-relaxed">sivasdugunfotografcisi@gmail.com</p>
+                                    <a href={links.email} className="text-foreground/50 font-light leading-relaxed hover:text-primary transition-colors">
+                                        {siteSettings.email || 'E-posta girilmedi'}
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -136,7 +141,7 @@ export default function ContactPage() {
                                 <h3 className="text-2xl font-serif">Hızlı Bilgi Hattı</h3>
                             </div>
                             <p className="text-emerald-400/60 mb-8 font-light">WhatsApp üzerinden anında fiyat bilgisi ve müsaitlik durumu alabilirsiniz.</p>
-                            <a href="https://wa.me/905324071563" target="_blank" rel="noopener noreferrer" className="block w-full">
+                            <a href={links.whatsapp} target="_blank" rel="noopener noreferrer" className="block w-full">
                                 <Button className="w-full h-14 rounded-full bg-emerald-500 text-white hover:bg-emerald-600 transition-all font-semibold">
                                     WhatsApp'tan Bize Yazın
                                 </Button>

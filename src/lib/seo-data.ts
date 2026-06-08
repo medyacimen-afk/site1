@@ -126,7 +126,109 @@ export const slugify = (text: string) => {
         .replace(/--+/g, '-');
 };
 
+// ——— Sivas dışında yerinde çekim hizmeti verilen çevre iller ve ilçeleri ———
+// Bu bölgeler de gerçek landing page'lere sahiptir ([slug] sayfası konum-bağımsız çalışır).
+export const regionProvinces = [
+    {
+        province: "Tokat",
+        districts: ["Merkez", "Almus", "Artova", "Başçiftlik", "Erbaa", "Niksar", "Pazar", "Reşadiye", "Sulusaray", "Turhal", "Yeşilyurt", "Zile"]
+    },
+    {
+        province: "Kayseri",
+        districts: ["Merkez", "Kocasinan", "Melikgazi", "Talas", "Akkışla", "Bünyan", "Develi", "Felahiye", "Hacılar", "İncesu", "Özvatan", "Pınarbaşı", "Sarıoğlan", "Sarız", "Tomarza", "Yahyalı", "Yeşilhisar"]
+    },
+    {
+        province: "Malatya",
+        districts: ["Merkez", "Battalgazi", "Akçadağ", "Arapgir", "Arguvan", "Darende", "Doğanşehir", "Doğanyol", "Hekimhan", "Kale", "Kuluncak", "Pütürge", "Yazıhan"]
+    },
+    {
+        province: "Erzincan",
+        districts: ["Merkez", "Çayırlı", "İliç", "Kemah", "Kemaliye", "Otlukbeli", "Refahiye", "Tercan", "Üzümlü"]
+    },
+    {
+        province: "Yozgat",
+        districts: ["Merkez", "Akdağmadeni", "Aydıncık", "Boğazlıyan", "Çandır", "Çayıralan", "Çekerek", "Kadışehri", "Saraykent", "Sarıkaya", "Sorgun", "Şefaatli", "Yenifakılı", "Yerköy"]
+    },
+    {
+        province: "Nevşehir",
+        districts: ["Merkez", "Acıgöl", "Avanos", "Derinkuyu", "Gülşehir", "Hacıbektaş", "Kozaklı", "Ürgüp"]
+    },
+    {
+        province: "Ordu",
+        districts: ["Altınordu", "Akkuş", "Aybastı", "Çamaş", "Çatalpınar", "Çaybaşı", "Fatsa", "Gölköy", "Gülyalı", "Gürgentepe", "İkizce", "Kabadüz", "Kabataş", "Korgan", "Kumru", "Mesudiye", "Perşembe", "Ulubey", "Ünye"]
+    },
+    {
+        province: "Kahramanmaraş",
+        districts: ["Onikişubat", "Dulkadiroğlu", "Afşin", "Andırın", "Çağlayancerit", "Ekinözü", "Elbistan", "Göksun", "Nurhak", "Pazarcık", "Türkoğlu"]
+    },
+    {
+        province: "Giresun",
+        districts: ["Şebinkarahisar", "Alucra", "Çamoluk"]
+    }
+];
+
+// regionProvinces'i benzersiz konum listesine düzleştir.
+// - Her ilin "Merkez"i, il adıyla temsil edilir (ör. Tokat -> tokat-dugun-fotografcisi).
+// - Çakışan slug'lar (ör. Sivas ilçeleriyle veya kendi aralarında) atlanır.
+export const regionLocations: { name: string; slug: string; province: string; landmarks: string[] }[] = (() => {
+    const seen = new Set<string>(districts.map((d) => slugify(d.name)));
+    const out: { name: string; slug: string; province: string; landmarks: string[] }[] = [];
+    for (const r of regionProvinces) {
+        const pSlug = slugify(r.province);
+        if (!seen.has(pSlug)) {
+            seen.add(pSlug);
+            out.push({ name: r.province, slug: pSlug, province: r.province, landmarks: [] });
+        }
+        for (const d of r.districts) {
+            if (d === 'Merkez') continue;
+            const s = slugify(d);
+            if (seen.has(s)) continue;
+            seen.add(s);
+            out.push({ name: d, slug: s, province: r.province, landmarks: [] });
+        }
+    }
+    return out;
+})();
+
+// ——— Bölgeye özgü özel konsept çekim sayfaları ———
+export const specialPages = [
+    {
+        slug: "kapadokya-dugun-fotografcisi",
+        title: "Kapadokya Düğün Fotoğrafçısı",
+        location: "Kapadokya",
+        service: "Düğün ve Dış Çekim Fotoğrafçılığı",
+        landmarks: ["Göreme", "Ürgüp", "Avanos", "Uçhisar", "Peribacaları"]
+    },
+    {
+        slug: "kapadokya-balon-cekimi",
+        title: "Kapadokya Balon Çekimi",
+        location: "Kapadokya",
+        service: "Sıcak Hava Balonu Çekimi",
+        landmarks: ["Göreme", "sıcak hava balonları", "gün doğumu"]
+    },
+    {
+        slug: "kapadokya-evlilik-teklifi",
+        title: "Kapadokya Evlilik Teklifi Çekimi",
+        location: "Kapadokya",
+        service: "Evlilik Teklifi Organizasyonu ve Çekimi",
+        landmarks: ["Peribacaları", "balon manzarası", "gün doğumu"]
+    },
+    {
+        slug: "kayseri-yilki-atlari-cekimi",
+        title: "Kayseri Yılkı Atları Konsept Çekimi",
+        location: "Kayseri",
+        service: "Yılkı Atları Konsept Çekimi",
+        landmarks: ["Hörmetçi Sazlığı", "yılkı atları", "gün batımı"]
+    }
+];
+
 export const parseSlug = (slug: string) => {
+    // 0. Özel konsept sayfaları (tam eşleşme) — diğer kontrollerden önce
+    const special = specialPages.find((p) => p.slug === slug);
+    if (special) {
+        return { type: 'special', page: special };
+    }
+
     // 1. Check District-Service combinations
     const districtIds = districts.map(d => slugify(d.name));
     for (const dId of districtIds) {
@@ -138,6 +240,22 @@ export const parseSlug = (slug: string) => {
                     type: 'district-service',
                     district: districts.find(d => slugify(d.name) === dId),
                     service: service
+                };
+            }
+        }
+    }
+
+    // 1.5. Çevre il/ilçe + hizmet kombinasyonları (gerçek landing page'ler)
+    for (const loc of regionLocations) {
+        if (slug.startsWith(`${loc.slug}-`)) {
+            const potentialServiceId = slug.slice(loc.slug.length + 1);
+            const service = services.find(s => s.id === potentialServiceId);
+            if (service) {
+                return {
+                    type: 'district-service',
+                    district: { id: loc.slug, name: loc.name, landmarks: loc.landmarks },
+                    service: service,
+                    region: loc.province
                 };
             }
         }

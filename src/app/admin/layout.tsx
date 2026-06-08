@@ -1,8 +1,12 @@
 "use client"
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { LayoutDashboard, Image as ImageIcon, Users, Briefcase, Camera, Menu, X, LogOut, Plus, ClipboardList, FileText, Settings, Package, PlayCircle, Search } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { LayoutDashboard, Image as ImageIcon, Users, Briefcase, Camera, Menu, X, LogOut, ClipboardList, FileText, Settings, Package, PlayCircle, Loader2, CalendarPlus, BarChart3 } from 'lucide-react'
 import { Toaster } from 'sonner'
+import { auth } from '@/lib/firebase'
+import { signOut } from 'firebase/auth'
+import { deleteCookie } from 'cookies-next'
 
 const navItems = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -13,13 +17,35 @@ const navItems = [
     { name: 'Düğün Klipleri', href: '/admin/videos', icon: PlayCircle },
     { name: 'Ekibimiz', href: '/admin/team', icon: Users },
     { name: 'Blog Yazıları', href: '/admin/blog', icon: FileText },
-    { name: 'Web Indexleme', href: '/admin/indexing', icon: Search },
     { name: 'Rezervasyonlar', href: '/admin/bookings', icon: ClipboardList },
+    { name: 'Manuel Rezervasyon', href: '/admin/rezervasyonlar', icon: CalendarPlus },
+    { name: 'Muhasebe', href: '/admin/muhasebe', icon: BarChart3 },
     { name: 'Ayarlar', href: '/admin/settings', icon: Settings },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const [sidebarOpen, setSidebarOpen] = useState(false)
+    const [loggingOut, setLoggingOut] = useState(false)
+    const router = useRouter()
+
+    const handleLogout = async () => {
+        if (loggingOut) return
+        setLoggingOut(true)
+        try {
+            // 1) Sunucudaki session cookie'sini sil
+            await fetch('/api/auth/session', { method: 'DELETE' })
+            // 2) Firebase istemci oturumunu kapat
+            await signOut(auth)
+            // 3) Istemci tarafi isaret cerezini temizle
+            deleteCookie('isLoggedIn')
+        } catch (e) {
+            console.error('Cikis hatasi:', e)
+        } finally {
+            // 4) Giris sayfasina don
+            router.push('/login')
+            router.refresh()
+        }
+    }
 
     return (
         <div className="min-h-screen bg-[#F4F4F5] flex overflow-hidden">
@@ -57,9 +83,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </div>
 
                 <div className="p-4 border-t">
-                    <button className="flex items-center w-full gap-3 px-3 py-2 text-red-600 rounded-lg hover:bg-red-50 transition-colors">
-                        <LogOut className="w-5 h-5" />
-                        <span className="font-medium text-sm">Çıkış Yap</span>
+                    <button
+                        onClick={handleLogout}
+                        disabled={loggingOut}
+                        className="flex items-center w-full gap-3 px-3 py-2 text-red-600 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50"
+                    >
+                        {loggingOut ? <Loader2 className="w-5 h-5 animate-spin" /> : <LogOut className="w-5 h-5" />}
+                        <span className="font-medium text-sm">{loggingOut ? 'Çıkış yapılıyor...' : 'Çıkış Yap'}</span>
                     </button>
                 </div>
             </aside>

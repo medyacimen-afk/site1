@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
+import { verifyAdmin } from '@/lib/auth-server'
 
 export async function GET() {
+    const admin = await verifyAdmin()
+    if (!admin) {
+        return NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 })
+    }
+
     try {
         const importDir = path.join(process.cwd(), 'public', 'fotoğraflar')
         

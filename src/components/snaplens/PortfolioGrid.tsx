@@ -1,6 +1,7 @@
 "use client"
 import React from 'react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { ArrowUpRight, Loader2 } from 'lucide-react'
 import { useContent } from '@/hooks/useContent'
 
@@ -30,6 +31,22 @@ export default function PortfolioGrid() {
     return (
         <section className="py-24 bg-white overflow-hidden">
             <div className="container mx-auto px-4">
+                {/* Bölüm Başlığı */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
+                    <div className="max-w-xl">
+                        <span className="text-primary tracking-[0.4em] uppercase text-xs font-bold mb-4 block">Portfolyomuz</span>
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-sans text-foreground font-medium tracking-tight">
+                            Son <span className="italic font-serif text-primary">Çalışmalarımız</span>
+                        </h2>
+                    </div>
+                    <Link
+                        href="/portfolio"
+                        className="hidden md:inline-flex items-center gap-2 text-sm font-semibold text-foreground/70 hover:text-primary border-b border-primary/40 hover:border-primary pb-1 transition-colors shrink-0"
+                    >
+                        Tüm Galeriyi Gör <ArrowUpRight className="w-4 h-4" />
+                    </Link>
+                </div>
+
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                     {homeItems.map((item, idx) => (
                         <motion.div
@@ -49,7 +66,7 @@ export default function PortfolioGrid() {
                                 {/* Overlay Gradient */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-40 group-hover:opacity-90 transition-opacity" />
                                 
-                                <div className="absolute top-4 right-4 w-8 h-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/20 transform translate-x-2 translate-y-[-2] opacity-0 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                                <div className="absolute top-4 right-4 w-8 h-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/20 transform translate-x-2 -translate-y-2 opacity-0 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
                                     <ArrowUpRight className="w-4 h-4" />
                                 </div>
 
@@ -66,12 +83,15 @@ export default function PortfolioGrid() {
                     ))}
                 </div>
 
-                {/* Görsel Sıklığına Göre Buton */}
+                {/* Tüm galeriye git */}
                 {portfolio.length > 4 && (
                     <div className="mt-16 text-center">
-                        <button className="text-foreground border-b border-primary pb-2 text-sm font-bold tracking-widest uppercase hover:text-primary transition-colors">
-                            Tüm Çalışmaları Gör
-                        </button>
+                        <Link
+                            href="/portfolio"
+                            className="inline-flex items-center gap-2 text-foreground border-b border-primary pb-2 text-sm font-bold tracking-widest uppercase hover:text-primary transition-colors"
+                        >
+                            Tüm Çalışmaları Gör <ArrowUpRight className="w-4 h-4" />
+                        </Link>
                     </div>
                 )}
             </div>

@@ -244,6 +244,16 @@ export default function AdminPortfolioPage() {
                 </motion.div>
             )}
 
+            {/* Düzenleme alanındaki kategori otomatik tamamlama seçenekleri */}
+            <datalist id="category-options">
+                <option value="Düğün Hikayesi" />
+                <option value="Nişan & Sünnet" />
+                <option value="Gelin Alma" />
+                <option value="Save the Date" />
+                <option value="Plato Çekimleri" />
+                <option value="Evlilik Teklifi" />
+            </datalist>
+
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="border-b border-gray-100 bg-gray-50 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
@@ -410,7 +420,7 @@ export default function AdminPortfolioPage() {
 
                             {items.length === 0 && (
                                 <tr>
-                                    <td colSpan={4} className="px-6 py-12 text-center text-gray-500 italic">
+                                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500 italic">
                                         Henüz portfolyo öğesi bulunmuyor.
                                     </td>
                                 </tr>

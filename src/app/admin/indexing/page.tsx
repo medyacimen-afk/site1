@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react'
 import { Send, CheckCircle2, AlertCircle, Loader2, Globe, Search, Zap, List, Info } from 'lucide-react'
 import { toast } from 'sonner'
-import { districts, services, plateaus, plateauQueries, slugify } from '@/lib/seo-data'
+import { districts, services, plateaus, plateauQueries, slugify, regionLocations, specialPages } from '@/lib/seo-data'
 
 const BASE_URL = 'https://sivasdugunfotografcisi.com'
 const DAILY_LIMIT = 200
@@ -50,6 +50,26 @@ function generateAllUrls(): { name: string; url: string; group: string }[] {
                 url: `${BASE_URL}/${plateau.id}-${query.id}`,
                 group: 'Plato SEO Sayfaları'
             })
+        })
+    })
+
+    // 4. Çevre il/ilçe + hizmet kombinasyonları
+    regionLocations.forEach(loc => {
+        services.forEach(service => {
+            urls.push({
+                name: `${loc.name} ${service.name}`,
+                url: `${BASE_URL}/${loc.slug}-${service.id}`,
+                group: 'Çevre İl SEO Sayfaları'
+            })
+        })
+    })
+
+    // 5. Özel konsept sayfaları
+    specialPages.forEach(sp => {
+        urls.push({
+            name: sp.title,
+            url: `${BASE_URL}/${sp.slug}`,
+            group: 'Özel Konsept Sayfaları'
         })
     })
 
@@ -140,7 +160,8 @@ export default function IndexingPage() {
 
     const mainPageUrls = allUrls.filter(u => u.group === 'Ana Sayfalar')
     const districtUrls = allUrls.filter(u => u.group === 'İlçe SEO Sayfaları')
-    const plateauUrls = allUrls.filter(u => u.group !== 'Ana Sayfalar' && u.group !== 'İlçe SEO Sayfaları')
+    const plateauUrls = allUrls.filter(u => u.group === 'Plato Sayfaları' || u.group === 'Plato SEO Sayfaları')
+    const regionUrls = allUrls.filter(u => u.group === 'Çevre İl SEO Sayfaları' || u.group === 'Özel Konsept Sayfaları')
 
     return (
         <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500">
@@ -174,7 +195,7 @@ export default function IndexingPage() {
             )}
 
             {/* Toplu Indexleme Butonları */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* Ana Sayfalar */}
                 <div className="bg-white p-5 rounded-2xl border border-black/5 shadow-sm space-y-3">
                     <div className="flex items-center gap-2">
@@ -230,6 +251,26 @@ export default function IndexingPage() {
                         onClick={() => handleBulkIndex(plateauUrls, 'Plato Sayfaları')}
                         disabled={bulkLoading}
                         className="w-full bg-purple-600 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-purple-700 disabled:opacity-50 transition-all"
+                    >
+                        <Zap className="w-3 h-3" /> İlk 200'ü İndexle
+                    </button>
+                </div>
+
+                {/* Çevre İl + Özel Konsept Sayfaları */}
+                <div className="bg-white p-5 rounded-2xl border border-black/5 shadow-sm space-y-3">
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
+                            <Globe className="w-4 h-4 text-emerald-600" />
+                        </div>
+                        <div>
+                            <p className="font-black text-sm">Çevre İl & Konsept</p>
+                            <p className="text-xs text-gray-400">{regionUrls.length} URL · günde 200</p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => handleBulkIndex(regionUrls, 'Çevre İl & Konsept')}
+                        disabled={bulkLoading}
+                        className="w-full bg-emerald-600 text-white py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-emerald-700 disabled:opacity-50 transition-all"
                     >
                         <Zap className="w-3 h-3" /> İlk 200'ü İndexle
                     </button>

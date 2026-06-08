@@ -1,6 +1,7 @@
 "use client"
 import React from 'react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { useContent } from '@/hooks/useContent'
 
 export default function TeamSection() {
@@ -74,13 +75,12 @@ export default function TeamSection() {
                             Alanında uzman fotoğrafçı ve sinematograf kadromuzla, her detayı titizlikle planlıyor ve aşkınızı en estetik şekilde kadraja sığdırıyoruz. 
                         </motion.p>
                         
-                        <motion.button 
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="border border-primary/20 text-primary px-10 py-4 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-sm"
+                        <Link
+                            href="/contact"
+                            className="inline-block border border-primary/20 text-primary px-10 py-4 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-primary hover:text-white hover:scale-[1.02] active:scale-95 transition-all shadow-sm"
                         >
                             Bizimle Çalışın
-                        </motion.button>
+                        </Link>
                     </div>
 
                 </div>

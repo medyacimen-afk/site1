@@ -2,7 +2,7 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { districts, services, slugify, parseSlug } from '@/lib/seo-data';
+import { districts, services, slugify, parseSlug, regionLocations, specialPages } from '@/lib/seo-data';
 import { generateSeoContent } from '@/lib/ai-seo';
 import JsonLd from '@/components/seo/JsonLd';
 import ReactMarkdown from 'react-markdown';
@@ -25,9 +25,13 @@ export async function generateMetadata({ params }: SEOPageProps): Promise<Metada
     let pageTitle = '';
     let pageDesc = '';
 
-    if (data.type === 'district-service') {
+    if (data.type === 'special') {
+        pageTitle = data.page?.title || '';
+        pageDesc = `${data.page?.title} — ${data.page?.location} bölgesinde profesyonel ${data.page?.service}. Sony A7R V kameralar ve DJI Mavic 3 Pro drone ile sanatsal çekim, 20 günde teslimat.`;
+    } else if (data.type === 'district-service') {
+        const loc = (data as any).region ? `${data.district?.name} (${(data as any).region})` : data.district?.name;
         pageTitle = `${data.district?.name} ${data.service?.name}`;
-        pageDesc = `${data.district?.name} hizmetinde profesyonel ${data.service?.name}. Sony A7R V kameralar ve DJI Mavic 3 Pro teknolojisi ile 20 günde albüm teslimatı.`;
+        pageDesc = `${loc} bölgesinde profesyonel ${data.service?.name}. Sony A7R V kameralar ve DJI Mavic 3 Pro teknolojisi ile 20 günde albüm teslimatı.`;
     } else if (data.type === 'plateau-query') {
         const plateauShort = data.plateau?.name?.replace(' Çekim Platosu', '') || '';
         pageTitle = `${plateauShort} ${data.query?.name}`;
@@ -38,7 +42,7 @@ export async function generateMetadata({ params }: SEOPageProps): Promise<Metada
     }
 
     return {
-        title: `${pageTitle} | Sivas Düğün Fotoğrafçısı`,
+        title: pageTitle,
         description: pageDesc,
         alternates: {
             canonical: `/${slug}`,
@@ -56,6 +60,20 @@ export async function generateStaticParams() {
         for (const s of priceServices) {
             params.push({ slug: `${slugify(d.name)}-${s.id}` });
         }
+    }
+
+    // Çevre il/ilçeler için temel hizmet sayfaları (ön-render edilen alt küme)
+    const coreRegionServices = services
+        .filter(s => ['dugun-fotografcisi', 'dis-cekim-fotografcisi', 'dugun-klibi-montaj', 'nisan-fotografcisi'].includes(s.id));
+    for (const loc of regionLocations) {
+        for (const s of coreRegionServices) {
+            params.push({ slug: `${loc.slug}-${s.id}` });
+        }
+    }
+
+    // Özel konsept çekim sayfaları
+    for (const sp of specialPages) {
+        params.push({ slug: sp.slug });
     }
 
     // Multiply plateau links (Link Multiplier for BOTANIK GARDEN etc.)
@@ -81,11 +99,18 @@ export default async function SEOPage({ params }: SEOPageProps) {
     let district = '';
     let service = '';
     let landmarks: string[] = [];
+    let region = 'Sivas';
 
-    if (data.type === 'district-service') {
+    if (data.type === 'special') {
+        district = data.page?.location || '';
+        service = data.page?.service || '';
+        landmarks = data.page?.landmarks || [];
+        region = data.page?.location || 'Sivas';
+    } else if (data.type === 'district-service') {
         district = data.district?.name || '';
         service = data.service?.name || '';
         landmarks = data.district?.landmarks || [];
+        region = (data as any).region || 'Sivas';
     } else if (data.type === 'plateau') {
         district = data.plateau?.name || 'Sivas';
         service = 'Dış Çekim';
@@ -96,7 +121,7 @@ export default async function SEOPage({ params }: SEOPageProps) {
         landmarks = [data.plateau?.name || ''];
     }
 
-    const seoContent = await generateSeoContent(district, service, landmarks, data.type);
+    const seoContent = await generateSeoContent(district, service, landmarks, data.type, region);
 
     // Dynamic Portfolio Fetching & Unique Selection
     let uniquePhotos: any[] = [];
@@ -133,6 +158,9 @@ export default async function SEOPage({ params }: SEOPageProps) {
         .filter(s => s.name !== service)
         .slice(0, 8);
 
+    // İç bağlantı tabanı: özel konsept sayfalarında geçerli bir konum slug'ı olmadığından Sivas'a yönlendir.
+    const linkBase = data.type === 'special' ? 'sivas' : slugify(district);
+
     // Determine if we should use the Premium Layout
     const isPremium = slug.includes('botanik-garden');
 
@@ -163,7 +191,7 @@ export default async function SEOPage({ params }: SEOPageProps) {
                     },
                     "mainEntityOfPage": {
                         "@type": "WebPage",
-                        "@id": `https://sivasdugunfotografcisi.com/${slug}`
+                        "@id": `{process.env.NEXT_PUBLIC_SITE_URL || 'https://fotografci.com'}/${slug}`
                     }
                 }}
             />
@@ -210,7 +238,7 @@ export default async function SEOPage({ params }: SEOPageProps) {
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                         <Link 
-                            href="https://wa.me/905324071563"
+                            href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP || ''}`}
                             className="w-full sm:w-auto bg-primary text-primary-foreground px-12 py-6 rounded-full font-bold flex items-center justify-center gap-3 hover:scale-105 transition-all shadow-xl shadow-primary/20"
                         >
                             <MessageCircle className="w-5 h-5" />
@@ -320,7 +348,7 @@ export default async function SEOPage({ params }: SEOPageProps) {
                                     {relatedServices.map((rs) => (
                                         <Link 
                                             key={rs.id}
-                                            href={`/${slugify(district)}-${rs.id}`}
+                                            href={`/${linkBase}-${rs.id}`}
                                             className="group/item flex items-center justify-between p-5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all text-xs"
                                         >
                                             <span className="opacity-70 group-hover/item:opacity-100 transition-opacity">{rs.name}</span>
@@ -352,7 +380,7 @@ export default async function SEOPage({ params }: SEOPageProps) {
                             <Link href="/online-rezervasyon" className="bg-primary text-primary-foreground px-12 py-6 rounded-full font-black text-lg w-full sm:w-auto uppercase tracking-widest hover:scale-105 transition-transform flex items-center justify-center gap-2 shadow-xl shadow-primary/20">
                                 <Calendar className="w-5 h-5" /> Randevu Al
                             </Link>
-                            <Link href="tel:05324071563" className="bg-white text-slate-900 px-12 py-6 rounded-full font-black text-lg border border-black/10 w-full sm:w-auto uppercase tracking-widest hover:bg-slate-50 transition-colors flex items-center justify-center gap-2 shadow-sm">
+                            <Link href={`tel:${process.env.NEXT_PUBLIC_PHONE || ''}`} className="bg-white text-slate-900 px-12 py-6 rounded-full font-black text-lg border border-black/10 w-full sm:w-auto uppercase tracking-widest hover:bg-slate-50 transition-colors flex items-center justify-center gap-2 shadow-sm">
                                 <MessageCircle className="w-5 h-5" /> İletişim
                             </Link>
                         </div>

@@ -102,7 +102,7 @@ export default function AdminBlogPage() {
                 image: imageUrl,
                 date: new Date().toISOString(),
                 status: 'published', // Defaulting to published for now
-                author: 'Duru Foto'
+                author: 'Sivas Düğün Fotoğrafçısı'
             }
 
             if (editId) {

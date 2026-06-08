@@ -19,6 +19,12 @@ export async function POST(request: Request) {
 
         const formattedPrice = Number(amount).toFixed(2)
 
+        // Gerçek adres / kimlik bilgisini kullan (yoksa güvenli varsayılan)
+        const tc = String(user?.tcNo || '').replace(/\D/g, '')
+        const identityNumber = tc.length === 11 ? tc : '11111111111'
+        const realAddress = (user?.address && String(user.address).trim()) || 'Sivas Merkez'
+        const contactFullName = `${user?.brideName || 'Gelin'}${user?.groomName ? ' & ' + user.groomName : ''}`
+
         const result = await checkoutFormInitialize({
             conversationId: bookingId,
             price: formattedPrice,
@@ -31,28 +37,28 @@ export async function POST(request: Request) {
                 name: user.brideName || 'Gelin',
                 surname: user.groomName || 'Damat',
                 gsmNumber: (user.phone || '').replace(/\s/g, ''),
-                email: user.email || 'bilgi@sivasdugunfotografcisi.com',
-                identityNumber: '11111111111',
+                email: user.email || 'bilgi@fotografci.com',
+                identityNumber: identityNumber,
                 lastLoginDate: '2023-10-05 12:43:35',
                 registrationDate: '2023-04-21 15:12:09',
-                registrationAddress: 'Sivas Merkez',
+                registrationAddress: realAddress,
                 ip: '85.34.78.112',
                 city: 'Sivas',
                 country: 'Turkey',
                 zipCode: '58000'
             },
             shippingAddress: {
-                contactName: `${user.brideName} & ${user.groomName}`,
+                contactName: contactFullName,
                 city: 'Sivas',
                 country: 'Turkey',
-                address: 'Online Rezervasyon',
+                address: realAddress,
                 zipCode: '58000'
             },
             billingAddress: {
-                contactName: `${user.brideName} & ${user.groomName}`,
+                contactName: contactFullName,
                 city: 'Sivas',
                 country: 'Turkey',
-                address: 'Online Rezervasyon',
+                address: realAddress,
                 zipCode: '58000'
             },
             basketItems: items.map((item: any) => ({

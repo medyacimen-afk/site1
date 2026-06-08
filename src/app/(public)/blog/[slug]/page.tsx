@@ -49,7 +49,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                                 </span>
                                 <span className="flex items-center gap-2">
                                     <User className="w-4 h-4 text-[#D49A73]" />
-                                    {post.author || 'Duru Foto'}
+                                    {post.author || 'Sivas Düğün Fotoğrafçısı'}
                                 </span>
                                 <span className="flex items-center gap-2">
                                     <Clock className="w-4 h-4 text-[#D49A73]" />
@@ -86,11 +86,11 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                     <div className="mt-20 pt-10 border-t border-black/5 flex flex-col items-center gap-8">
                         <div className="flex items-center gap-4">
                             <div className="w-16 h-16 bg-[#FFF9E5] text-[#D49A73] rounded-full flex items-center justify-center font-serif font-black text-2xl border border-[#D49A73]/20">
-                                D
+                                S
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-[10px] font-black uppercase tracking-widest text-[#D49A73]">Yazarlar</span>
-                                <span className="text-lg font-serif italic text-black font-semibold">Duru Foto Editör Masası</span>
+                                <span className="text-lg font-serif italic text-black font-semibold">Sivas Düğün Fotoğrafçısı Editör Masası</span>
                             </div>
                         </div>
                         <Link 

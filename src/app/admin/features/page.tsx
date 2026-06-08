@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react'
-import { Plus, Trash2, Edit, Save, Loader2, Camera, Aperture, Heart, Lightbulb, Target, PenTool } from 'lucide-react'
+import { Plus, Trash2, Loader2 } from 'lucide-react'
 import { db } from '@/lib/firebase'
 import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore'
 import { toast } from 'sonner'

@@ -110,6 +110,57 @@ export default function AdminBookingsPage() {
                                         </span>
                                     ))}
                                 </div>
+
+                                {/* Detaylı İletişim & Fatura Bilgileri */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-xs bg-gray-50/70 rounded-xl p-4 border border-gray-100">
+                                    {booking.bridePhone && (
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-gray-400 font-medium min-w-[80px]">Gelin Tel:</span>
+                                            <span className="font-semibold text-gray-700">{booking.bridePhone}</span>
+                                        </div>
+                                    )}
+                                    {booking.groomPhone && (
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-gray-400 font-medium min-w-[80px]">Damat Tel:</span>
+                                            <span className="font-semibold text-gray-700">{booking.groomPhone}</span>
+                                        </div>
+                                    )}
+                                    {booking.address && (
+                                        <div className="flex items-start gap-2 sm:col-span-2">
+                                            <span className="text-gray-400 font-medium min-w-[80px] shrink-0">Adres:</span>
+                                            <span className="font-semibold text-gray-700">{booking.address}</span>
+                                        </div>
+                                    )}
+                                    {(Number(booking.weekendFee) > 0 || Number(booking.sunsetFee) > 0) && (
+                                        <div className="flex items-center gap-2 flex-wrap sm:col-span-2">
+                                            <span className="text-gray-400 font-medium min-w-[80px]">Ek Ücret:</span>
+                                            {Number(booking.weekendFee) > 0 && (
+                                                <span className="px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full text-[10px] font-bold">Hafta Sonu +{Number(booking.weekendFee).toLocaleString('tr-TR')} TL</span>
+                                            )}
+                                            {Number(booking.sunsetFee) > 0 && (
+                                                <span className="px-2 py-0.5 bg-orange-100 text-orange-700 rounded-full text-[10px] font-bold">Gün Batımı +{Number(booking.sunsetFee).toLocaleString('tr-TR')} TL</span>
+                                            )}
+                                        </div>
+                                    )}
+                                    <div className="flex items-start gap-2 sm:col-span-2 pt-2 border-t border-gray-100">
+                                        <span className="text-gray-400 font-medium min-w-[80px] shrink-0">Fatura:</span>
+                                        {booking.billing?.type === 'kurumsal' ? (
+                                            <span className="font-semibold text-gray-700">
+                                                <span className="inline-block px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-[10px] font-bold mr-2 uppercase">Kurumsal</span>
+                                                {booking.billing.companyName}
+                                                {booking.billing.taxOffice ? ` · ${booking.billing.taxOffice}` : ''}
+                                                {booking.billing.taxNo ? ` · VKN: ${booking.billing.taxNo}` : ''}
+                                            </span>
+                                        ) : booking.billing?.type === 'bireysel' ? (
+                                            <span className="font-semibold text-gray-700">
+                                                <span className="inline-block px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-[10px] font-bold mr-2 uppercase">Bireysel</span>
+                                                {booking.billing.tcNo ? `TC: ${booking.billing.tcNo}` : 'Belirtilmemiş'}
+                                            </span>
+                                        ) : (
+                                            <span className="text-gray-400 italic">Belirtilmemiş</span>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Date & Amount */}

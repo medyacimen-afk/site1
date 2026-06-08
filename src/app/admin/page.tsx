@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Camera, Users, Image as ImageIcon, Briefcase, Loader2, Wallet, TrendingUp, Clock, CheckCircle2, XCircle, BarChart3, ChevronRight } from 'lucide-react'
+import { Camera, Users, Image as ImageIcon, Briefcase, Loader2, Wallet, TrendingUp, Clock, CheckCircle2, XCircle, BarChart3, ChevronRight, Wrench } from 'lucide-react'
 import { db } from '@/lib/firebase'
 import { collection, getDocs, query, orderBy, getCountFromServer } from 'firebase/firestore'
 import Link from 'next/link'
@@ -88,12 +88,30 @@ export default function AdminDashboardPage() {
             <div className="flex justify-between items-end">
                 <div className="space-y-1">
                     <h1 className="text-4xl font-serif font-black tracking-tight text-gray-900">Yönetim Paneli</h1>
-                    <p className="text-gray-500 italic text-sm">SDF CMS üzerinden tüm fotografçılık içeriklerini yönetin.</p>
+                    <p className="text-gray-500 italic text-sm">Tüm içerikleri buradan yönetin.</p>
                 </div>
                 <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] bg-white px-5 py-2.5 rounded-full border border-black/5 shadow-sm">
                     {new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </div>
             </div>
+
+            {/* Kurulum sihirbazı bandı */}
+            <Link href="/kurulum">
+                <div className="flex items-center justify-between p-4 rounded-2xl border cursor-pointer hover:opacity-90 transition-all"
+                    style={{ background: 'linear-gradient(135deg, #FBF6EC, #f5ede0)', borderColor: 'rgba(176,144,80,0.3)' }}>
+                    <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl flex items-center justify-center"
+                            style={{ background: 'linear-gradient(135deg, #CAAE78, #B09050)' }}>
+                            <Wrench className="w-4.5 h-4.5 text-white" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-bold text-gray-800">Kurulum Sihirbazı</p>
+                            <p className="text-xs text-gray-500">Firebase ve Vercel ortam değişkenlerini yapılandırın</p>
+                        </div>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                </div>
+            </Link>
 
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 {stats.map((stat, idx) => (

@@ -1,8 +1,8 @@
 "use client"
 import React, { useState, useEffect } from 'react'
-import { Plus, Trash2, Edit, Save, Loader2, X, UploadCloud } from 'lucide-react'
+import { Plus, Trash2, Edit, Loader2, X, UploadCloud, CheckCircle } from 'lucide-react'
 import { db, auth } from '@/lib/firebase'
-import { collection, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore'
+import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore'
 import { uploadImage } from '@/lib/upload'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
@@ -19,6 +19,14 @@ export default function AdminServicesPage() {
     const [newDiscountedPrice, setNewDiscountedPrice] = useState("")
     const [newIsExtra, setNewIsExtra] = useState(false)
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
+
+    // Düzenleme durumları
+    const [editingId, setEditingId] = useState<string | null>(null)
+    const [editTitle, setEditTitle] = useState("")
+    const [editDesc, setEditDesc] = useState("")
+    const [editPrice, setEditPrice] = useState("")
+    const [editDiscountedPrice, setEditDiscountedPrice] = useState("")
+    const [editIsExtra, setEditIsExtra] = useState(false)
 
     useEffect(() => {
         fetchServices()
@@ -64,6 +72,34 @@ export default function AdminServicesPage() {
             console.error(error); toast.error(error?.message || "Hizmet eklenemedi.")
         } finally {
             setUploading(false)
+        }
+    }
+
+    const startEdit = (item: any) => {
+        setEditingId(item.id)
+        setEditTitle(item.title || "")
+        setEditDesc(item.description || "")
+        setEditPrice(item.price != null ? String(item.price) : "")
+        setEditDiscountedPrice(item.discountedPrice != null ? String(item.discountedPrice) : "")
+        setEditIsExtra(!!item.isExtra)
+    }
+
+    const handleUpdate = async (id: string) => {
+        if (!editTitle) return toast.error("Başlık boş olamaz.")
+        try {
+            const updates = {
+                title: editTitle,
+                description: editDesc,
+                price: Number(editPrice) || 0,
+                discountedPrice: editDiscountedPrice ? Number(editDiscountedPrice) : null,
+                isExtra: editIsExtra,
+            }
+            await updateDoc(doc(db, 'services', id), updates)
+            setItems(items.map(i => i.id === id ? { ...i, ...updates } : i))
+            setEditingId(null)
+            toast.success("Hizmet güncellendi.")
+        } catch (error: any) {
+            console.error(error); toast.error("Güncelleme başarısız: " + (error?.message || ""))
         }
     }
 
@@ -159,26 +195,60 @@ export default function AdminServicesPage() {
                                 <tr key={item.id} className="hover:bg-gray-50 transition-colors">
                                     <td className="px-6 py-4"><div className="h-16 w-16 rounded-lg overflow-hidden bg-gray-100 border border-gray-200"><img src={item.image} className="w-full h-full object-cover" /></div></td>
                                     <td className="px-6 py-4">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <div className="font-semibold text-gray-900">{item.title}</div>
-                                            {item.isExtra && (
-                                                <span className="bg-purple-100 text-purple-700 text-[10px] px-2 py-0.5 rounded-full font-bold">EKSTRA</span>
-                                            )}
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            {item.discountedPrice ? (
+                                        {editingId === item.id ? (
+                                            <div className="space-y-2 min-w-[200px]">
+                                                <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="w-full rounded-lg border-gray-300 border p-1.5 text-sm outline-none focus:border-[#D49A73]" placeholder="Başlık" />
+                                                <div className="flex items-center gap-2">
+                                                    <input type="number" value={editPrice} onChange={(e) => setEditPrice(e.target.value)} className="w-24 rounded-lg border-gray-300 border p-1.5 text-xs outline-none focus:border-[#D49A73]" placeholder="Fiyat" />
+                                                    <input type="number" value={editDiscountedPrice} onChange={(e) => setEditDiscountedPrice(e.target.value)} className="w-24 rounded-lg border-gray-300 border p-1.5 text-xs outline-none focus:border-[#D49A73]" placeholder="İndirimli" />
+                                                </div>
+                                                <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer">
+                                                    <input type="checkbox" checked={editIsExtra} onChange={(e) => setEditIsExtra(e.target.checked)} className="rounded border-gray-300 text-[#D49A73] focus:ring-[#D49A73]" />
+                                                    Ekstra hizmet
+                                                </label>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <div className="font-semibold text-gray-900">{item.title}</div>
+                                                    {item.isExtra && (
+                                                        <span className="bg-purple-100 text-purple-700 text-[10px] px-2 py-0.5 rounded-full font-bold">EKSTRA</span>
+                                                    )}
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    {item.discountedPrice ? (
+                                                        <>
+                                                            <span className="text-[10px] font-bold text-gray-400 line-through">{item.price?.toLocaleString('tr-TR')} TL</span>
+                                                            <span className="text-[11px] font-bold text-red-500 uppercase tracking-wider">{item.discountedPrice?.toLocaleString('tr-TR')} TL</span>
+                                                        </>
+                                                    ) : (
+                                                        <span className="text-[11px] font-bold text-[#D49A73] uppercase tracking-wider">{item.price?.toLocaleString('tr-TR')} TL</span>
+                                                    )}
+                                                </div>
+                                            </>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {editingId === item.id ? (
+                                            <textarea rows={2} value={editDesc} onChange={(e) => setEditDesc(e.target.value)} className="w-full rounded-lg border-gray-300 border p-1.5 text-sm outline-none focus:border-[#D49A73] resize-none max-w-sm" placeholder="Açıklama" />
+                                        ) : (
+                                            <div className="text-gray-500 line-clamp-1 max-w-sm">{item.description}</div>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4 text-right">
+                                        <div className="flex items-center justify-end gap-2">
+                                            {editingId === item.id ? (
                                                 <>
-                                                    <span className="text-[10px] font-bold text-gray-400 line-through">{item.price?.toLocaleString('tr-TR')} TL</span>
-                                                    <span className="text-[11px] font-bold text-red-500 uppercase tracking-wider">{item.discountedPrice?.toLocaleString('tr-TR')} TL</span>
+                                                    <button onClick={() => handleUpdate(item.id)} className="text-green-600 hover:text-green-800 p-2 hover:bg-green-50 rounded-lg transition-colors" title="Kaydet"><CheckCircle className="w-5 h-5" /></button>
+                                                    <button onClick={() => setEditingId(null)} className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-50 rounded-lg transition-colors" title="İptal"><X className="w-5 h-5" /></button>
                                                 </>
                                             ) : (
-                                                <span className="text-[11px] font-bold text-[#D49A73] uppercase tracking-wider">{item.price?.toLocaleString('tr-TR')} TL</span>
+                                                <>
+                                                    <button onClick={() => startEdit(item)} className="text-gray-400 hover:text-[#D49A73] transition-colors p-2 hover:bg-orange-50 rounded-lg" title="Düzenle"><Edit className="w-5 h-5" /></button>
+                                                    <button onClick={() => handleDelete(item.id)} className="text-gray-400 hover:text-red-600 transition-colors p-2 hover:bg-red-50 rounded-lg" title="Sil"><Trash2 className="w-5 h-5" /></button>
+                                                </>
                                             )}
                                         </div>
-                                    </td>
-                                    <td className="px-6 py-4"><div className="text-gray-500 line-clamp-1 max-w-sm">{item.description}</div></td>
-                                    <td className="px-6 py-4 text-right">
-                                        <button onClick={() => handleDelete(item.id)} className="text-gray-400 hover:text-red-600 transition-colors p-2 hover:bg-red-50 rounded-lg"><Trash2 className="w-5 h-5" /></button>
                                     </td>
                                 </tr>
                             ))}

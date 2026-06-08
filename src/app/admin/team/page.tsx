@@ -1,8 +1,8 @@
 "use client"
 import React, { useState, useEffect } from 'react'
-import { Plus, Trash2, Edit, Save, Loader2, X, UploadCloud } from 'lucide-react'
+import { Plus, Trash2, Edit, Loader2, X, UploadCloud, CheckCircle } from 'lucide-react'
 import { db } from '@/lib/firebase'
-import { collection, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore'
+import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore'
 import { uploadImage } from '@/lib/upload'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
@@ -16,6 +16,11 @@ export default function AdminTeamPage() {
     const [newName, setNewName] = useState("")
     const [newRole, setNewRole] = useState("")
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
+
+    // Düzenleme durumları
+    const [editingId, setEditingId] = useState<string | null>(null)
+    const [editName, setEditName] = useState("")
+    const [editRole, setEditRole] = useState("")
 
     useEffect(() => {
         fetchTeam()
@@ -53,6 +58,25 @@ export default function AdminTeamPage() {
             console.error(error); toast.error("Ekip üyesi eklenemedi.")
         } finally {
             setUploading(false)
+        }
+    }
+
+    const startEdit = (member: any) => {
+        setEditingId(member.id)
+        setEditName(member.name || "")
+        setEditRole(member.role || "")
+    }
+
+    const handleUpdate = async (id: string) => {
+        if (!editName) return toast.error("İsim boş olamaz.")
+        try {
+            const updates = { name: editName, role: editRole }
+            await updateDoc(doc(db, 'team', id), updates)
+            setItems(items.map(i => i.id === id ? { ...i, ...updates } : i))
+            setEditingId(null)
+            toast.success("Ekip üyesi güncellendi.")
+        } catch (error: any) {
+            console.error(error); toast.error("Güncelleme başarısız.")
         }
     }
 
@@ -120,15 +144,31 @@ export default function AdminTeamPage() {
                     <div key={member.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
                         <div className="aspect-[3/4] relative overflow-hidden bg-gray-100 italic">
                             <img src={member.image} alt={member.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                            <div className="absolute top-2 right-2">
-                                <button onClick={() => handleDelete(member.id)} className="p-2 bg-white/90 backdrop-blur-md rounded-lg text-red-600 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="absolute top-2 right-2 flex gap-2">
+                                <button onClick={() => startEdit(member)} className="p-2 bg-white/90 backdrop-blur-md rounded-lg text-gray-700 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity" title="Düzenle">
+                                    <Edit className="w-4 h-4" />
+                                </button>
+                                <button onClick={() => handleDelete(member.id)} className="p-2 bg-white/90 backdrop-blur-md rounded-lg text-red-600 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity" title="Sil">
                                     <Trash2 className="w-4 h-4" />
                                 </button>
                             </div>
                         </div>
                         <div className="p-4 text-center">
-                            <h3 className="font-bold text-gray-900 line-clamp-1">{member.name}</h3>
-                            <p className="text-[#D49A73] text-xs font-semibold uppercase tracking-wider mt-1">{member.role}</p>
+                            {editingId === member.id ? (
+                                <div className="space-y-2">
+                                    <input value={editName} onChange={(e) => setEditName(e.target.value)} className="w-full rounded-lg border-gray-300 border p-1.5 text-sm text-center outline-none focus:border-[#D49A73]" placeholder="Ad Soyad" />
+                                    <input value={editRole} onChange={(e) => setEditRole(e.target.value)} className="w-full rounded-lg border-gray-300 border p-1.5 text-xs text-center outline-none focus:border-[#D49A73]" placeholder="Unvan / Rol" />
+                                    <div className="flex items-center justify-center gap-2 pt-1">
+                                        <button onClick={() => handleUpdate(member.id)} className="text-green-600 hover:text-green-800 p-1.5 hover:bg-green-50 rounded-lg transition-colors" title="Kaydet"><CheckCircle className="w-5 h-5" /></button>
+                                        <button onClick={() => setEditingId(null)} className="text-gray-400 hover:text-gray-600 p-1.5 hover:bg-gray-50 rounded-lg transition-colors" title="İptal"><X className="w-5 h-5" /></button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    <h3 className="font-bold text-gray-900 line-clamp-1">{member.name}</h3>
+                                    <p className="text-[#D49A73] text-xs font-semibold uppercase tracking-wider mt-1">{member.role}</p>
+                                </>
+                            )}
                         </div>
                     </div>
                 ))}

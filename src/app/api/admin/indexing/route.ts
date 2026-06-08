@@ -1,8 +1,14 @@
 import { google } from 'googleapis';
 import { NextResponse } from 'next/server';
+import { verifyAdmin } from '@/lib/auth-server';
 
 export async function POST(request: Request) {
   try {
+    const admin = await verifyAdmin();
+    if (!admin) {
+      return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 });
+    }
+
     const { url, type } = await request.json();
 
     if (!url) {

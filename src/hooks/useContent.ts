@@ -6,9 +6,9 @@ import { collection, onSnapshot, doc, query, orderBy } from 'firebase/firestore'
 export function useContent() {
     const [settings, setSettings] = useState({ 
         heroTitle: "En Özel Anları Yakalıyoruz,<br/>Sizin Hikayenizi Yazıyoruz", 
-        heroSubtitle: "Sivas'ın en çok tercih edilen düğün fotoğrafçısı olarak, en mutlu gününüzü profesyonel kadromuz ve son teknoloji ekipmanlarımızla hikayeleştiriyoruz.",
+        heroSubtitle: "Profesyonel düğün fotoğrafçısı olarak, en mutlu gününüzü profesyonel kadromuz ve son teknoloji ekipmanlarımızla hikayeleştiriyoruz.",
         aboutTitle: "Mercekten Bakarak <br/> Aşkın Dünyasını Keşfedin",
-        aboutDesc: "Sivas Düğün Fotoğrafçısı olarak, her çiftin hikayesinin benzersiz olduğuna inanıyoruz. Duygularınızı en saf haliyle yakalamak ve yıllar sonra bile aynı heyecanla bakacağınız kareler yaratmak için buradayız.",
+        aboutDesc: "Her çiftin hikayesinin benzersiz olduğuna inanıyoruz. Duygularınızı en saf haliyle yakalamak ve yıllar sonra bile aynı heyecanla bakacağınız kareler yaratmak için buradayız.",
         stat1Value: "10+", stat1Label: "Yıllık Tecrübe",
         stat2Value: "450+", stat2Label: "Mutlu Çiftler",
         stat3Value: "900+", stat3Label: "Özel Çekim"

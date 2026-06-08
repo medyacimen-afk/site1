@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
+import { Geist, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,38 +12,38 @@ const playfair = Playfair_Display({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://fotografci.com'
+
 export const metadata: Metadata = {
   title: {
-    default: "Sivas Düğün Fotoğrafçısı® | Profesyonel Düğün Hikayesi & Dış Çekim",
-    template: "%s | Sivas Düğün Fotoğrafçısı®"
+    default: "Profesyonel Düğün Fotoğrafçısı",
+    template: "%s | Profesyonel Düğün Fotoğrafçısı"
   },
-  description: "Sivas'ın marka tescilli tek düğün fotoğrafçılığı markası olan Sivas Düğün Fotoğrafçısı®, 10 yıllık tecrübesiyle en özel anlarınızı ölümsüzleştiriyor. Taklitlerimizden sakınınız.",
-  keywords: ["Sivas düğün fotoğrafçısı", "Sivas dış çekim", "Sivas düğün hikayesi", "Sivas drone çekimi", "Sivas Düğün Fotoğrafçısı tescilli"],
-  authors: [{ name: "Sivas Düğün Fotoğrafçısı®" }],
-  creator: "Sivas Düğün Fotoğrafçısı®",
-  publisher: "Sivas Düğün Fotoğrafçısı®",
+  description: "Profesyonel düğün fotoğrafçılığı ve dış çekim hizmetleri.",
+  authors: [{ name: "Fotoğrafçı" }],
+  creator: "Fotoğrafçı",
+  publisher: "Fotoğrafçı",
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://sivasdugunfotografcisi.com'), // Replace with actual domain when known
+  metadataBase: new URL(siteUrl),
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: "Sivas Düğün Fotoğrafçısı® | Profesyonel Düğün Hikayesi & Dış Çekim",
-    description: "Sivas'ın tescilli tek markası ile aşkınızı sanata dönüştürüyoruz. Taklitlerimize karşı dikkatli olunuz.",
-    url: 'https://sivasdugunfotografcisi.com',
-    siteName: 'Sivas Düğün Fotoğrafçısı®',
+    title: "Profesyonel Düğün Fotoğrafçısı",
+    description: "Profesyonel düğün fotoğrafçılığı ve dış çekim hizmetleri.",
+    url: siteUrl,
+    siteName: 'Düğün Fotoğrafçısı',
     locale: 'tr_TR',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Sivas Düğün Fotoğrafçısı®",
-    description: "Sivas'ın tek tescilli düğün fotoğrafçısı markası.",
-    creator: '@sivasdugunfotografcisi',
+    title: "Profesyonel Düğün Fotoğrafçısı",
+    description: "Profesyonel düğün fotoğrafçılığı ve dış çekim hizmetleri.",
   },
   robots: {
     index: true,
@@ -55,9 +55,6 @@ export const metadata: Metadata = {
       'max-image-preview': 'large',
       'max-snippet': -1,
     },
-  },
-  verification: {
-    google: 'DK9Qo9gqa5FV8D-coj1IUjr0GaVjnZ3YTPYhgmsbm48',
   },
 };
 

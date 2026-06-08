@@ -44,7 +44,7 @@ export default function PrivacyPolicy() {
                     <section>
                         <h2 className="text-2xl font-sans font-medium text-foreground mb-4">5. İletişim</h2>
                         <p>
-                            Gizlilik politikamız hakkındaki sorularınız için sivasdugunfotografcisi@gmail.com adresinden bizimle iletişime geçebilirsiniz.
+                            Gizlilik politikamız hakkındaki sorularınız için iletişim sayfamızdan bizimle iletişime geçebilirsiniz.
                         </p>
                     </section>
                 </div>

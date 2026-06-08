@@ -3,11 +3,8 @@ import fs from 'fs';
 
 async function test() {
   try {
-    const envLocal = fs.readFileSync('.env.local', 'utf8');
-    const match = envLocal.match(/GOOGLE_INDEXING_SERVICE_ACCOUNT='(.*?)'/);
-    if (!match) throw new Error("No env var found");
-    
-    const credentials = JSON.parse(match[1]);
+    const credsStr = fs.readFileSync('src/scripts/new-creds.json', 'utf8');
+    const credentials = JSON.parse(credsStr);
     
     let privateKey = credentials.private_key || '';
     if (!privateKey.includes('-----BEGIN PRIVATE KEY-----\n')) {

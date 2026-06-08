@@ -1,8 +1,8 @@
 import { MetadataRoute } from 'next'
-import { districts, services, slugify, plateaus, plateauQueries } from '@/lib/seo-data'
+import { districts, services, slugify, plateaus, plateauQueries, regionLocations, specialPages } from '@/lib/seo-data'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = 'https://sivasdugunfotografcisi.com'
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://fotografci.com'
 
     // Main Pages
     const mainPages = [
@@ -54,5 +54,26 @@ export default function sitemap(): MetadataRoute.Sitemap {
         })
     })
 
-    return [...mainPages, ...districtPages, ...plateauPages]
+    // 3. Çevre il/ilçe sayfaları (tüm hizmetlerle)
+    const regionPages: MetadataRoute.Sitemap = []
+    regionLocations.forEach((loc) => {
+        services.forEach((service) => {
+            regionPages.push({
+                url: `${baseUrl}/${loc.slug}-${service.id}`,
+                lastModified: new Date(),
+                changeFrequency: 'weekly' as const,
+                priority: 0.6,
+            })
+        })
+    })
+
+    // 4. Özel konsept çekim sayfaları
+    const specialPagesEntries: MetadataRoute.Sitemap = specialPages.map((sp) => ({
+        url: `${baseUrl}/${sp.slug}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.8,
+    }))
+
+    return [...mainPages, ...districtPages, ...plateauPages, ...regionPages, ...specialPagesEntries]
 }

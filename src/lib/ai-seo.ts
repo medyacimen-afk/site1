@@ -1,4 +1,4 @@
-import { geminiModel } from "./gemini";
+import { getGeminiModel } from "./gemini";
 import cacheData from "@/data/seo-content-cache.json";
 
 interface SeoContent {
@@ -15,7 +15,7 @@ const cache: Record<string, SeoContent> = cacheData;
 const variations = {
     hooks: [
         "{district} sokaklarında yankılanan o eşsiz aşk hikayesini, en sanatsal bakış açısıyla vizörümüze hapsediyoruz.",
-        "Sivas'ın kalbinde, {district} ilçesinin doğal dokusunda unutulmaz bir {service} deneyimine hazır mısınız?",
+        "{region}'in kalbinde, {district} bölgesinin doğal dokusunda unutulmaz bir {service} deneyimine hazır mısınız?",
         "Zamanı durdurmak imkansız olabilir ama {district}'ta o büyülü anları ölümsüzleştirmek bizim işimiz.",
         "Her deklanşör sesi, {district}'ta yeni bir başlangıcın ve sonsuz bir aşkın kanıtıdır.",
         "{district}'nın tarihi ve doğal güzellikleri altında, sizin hikayenizi bir sanat eserine dönüştürüyoruz."
@@ -34,39 +34,47 @@ const variations = {
     ]
 };
 
-const getInformedFallback = (district: string, service: string, landmarks: string[]): SeoContent => {
+const getInformedFallback = (district: string, service: string, landmarks: string[], region: string = "Sivas"): SeoContent => {
     // Deterministic random selection based on district and service to ensure persistence
     const seed = district.length + service.length;
     const select = (arr: string[]) => arr[seed % arr.length];
-    
+
+    const fill = (s: string) =>
+        s.replace(/{district}/g, district).replace(/{service}/g, service).replace(/{region}/g, region);
+
     const landmarkStr = landmarks.length > 0 ? `**${landmarks.join(", ")}**` : district;
-    
-    const title = `${district} ${service} | Sivas'ın En İyi Fotoğrafçısı`;
-    const description = `${district} genelinde profesyonel ${service}. Sony A7R V kalitesi ve DJI Mavic 3 Pro drone çekimi ile 20 günde albüm teslimatı.`;
+    const isPlateau = district.toLowerCase().includes('botanik') || district.toLowerCase().includes('garden');
+
+    const title = `${district} ${service} | Sivas Düğün Fotoğrafçısı`;
+    const description = `${district} ve çevresinde profesyonel ${service}. Sony A7R V kalitesi ve DJI Mavic 3 Pro drone çekimi ile 20 günde albüm teslimatı.`;
     const h1 = `${district} ${service}`;
 
-    let venueDescription = `${select(variations.hooks).replace("{district}", district).replace("{service}", service)} **Sivas Düğün Fotoğrafçısı** (@sivasdugunfotografcisi) kimliğimizle, ${district} sakinlerine sadece bir fotoğraf değil, bir miras bırakıyoruz.`;
-    
+    let venueDescription = `${fill(select(variations.hooks))} **Sivas Düğün Fotoğrafçısı** (@sivasdugunfotografcisi) kimliğimizle, ${district} ve çevresine sadece bir fotoğraf değil, bir miras bırakıyoruz.`;
+
     // Custom logic for Botanic Garden / Plateaus in fallback
-    if (district.toLowerCase().includes('botanik') || district.toLowerCase().includes('garden')) {
+    if (isPlateau) {
         venueDescription = `**Sivas Botanik Garden Çekim Platosu**'nun her mevsim değişen büyülü atmosferinde, hikayenize sanatsal bir dokunuş katıyoruz. Yazın kavurucu sıcağında serinleyen dinlenme alanları, kışın ise kar ve yağmurdan etkilenmeyen konsept kapalı stüdyolarımızla çekimlerinize konforla devam ediyoruz.`;
     }
 
+    const fourSeason = isPlateau
+        ? "Botanik Garden'ın hem açık hem kapalı alanları sayesinde her hava koşulunda kesintisiz çekim."
+        : "Açık ve kapalı mekan çözümlerimiz sayesinde her hava koşulunda kesintisiz, konforlu çekim.";
+
     const content = `
-## Sivas'ta ${service}: Aşkın En Saf Hali
+## ${district} ${service}: Aşkın En Saf Hali
 
 ${venueDescription}
 
 ### Sanatsal Vizyon ve Teknoloji
-${select(variations.tech_vibe).replace("{district}", district)} Çekim lokasyonlarımızı belirlerken ${landmarkStr} gibi noktaların ışık açısını ve mevsimsel dokusunu ezbere biliyoruz. 
+${fill(select(variations.tech_vibe))} Çekim lokasyonlarımızı belirlerken ${landmarkStr} gibi noktaların ışık açısını ve mevsimsel dokusunu ezbere biliyoruz.
 
-### Sivas'ta Özel Dokunuşlar
-${select(variations.posing).replace("{district}", district)} Sivas'ın her metrekaresinde, sizin heyecanınızı ve mutluluğunuzu dondurarak gelecek nesillere birer şaheser teslim etmek tek gayemiz.
+### ${district} İçin Özel Dokunuşlar
+${fill(select(variations.posing))} ${district} bölgesinin her köşesinde, sizin heyecanınızı ve mutluluğunuzu dondurarak gelecek nesillere birer şaheser teslim etmek tek gayemiz.
 
 ---
 
 **Neden Sivas Düğün Fotoğrafçısı?**
-*   **Dört Mevsim Konfor:** Botanik Garden'ın hem açık hem kapalı alanları sayesinde her hava koşulunda kesintisiz çekim.
+*   **Dört Mevsim Konfor:** ${fourSeason}
 *   **Sony A7R V Gücü:** Her karede kristal netliği ve 61MP devasa detay derinliği.
 *   **20 Gün Teslim:** İş akışımızı en kaliteli şekilde yönetiyor ve albümlerinizi 20 gün içinde teslim ediyoruz.
 *   **Kişiye Özel Edit:** Standart filtreler değil, her fotoğrafa özel renk ve ışık terbiyesi uyguluyoruz.
@@ -74,28 +82,35 @@ ${select(variations.posing).replace("{district}", district)} Sivas'ın her metre
 📞 **Hemen İletişime Geçin:** [0532 407 1563](tel:05324071563)
 `;
 
+    const weatherAnswer = isPlateau
+        ? "Botanik Garden çekim platosu hem açık hem de kapalı alan konseptlerine sahip olduğu için yağmur, kar veya rüzgar gibi olumsuz hava şartlarında çekimlerimiz kesintisiz ve konforlu bir şekilde devam etmektedir."
+        : "Olumsuz hava koşullarında çekim planını esnetiyor; kapalı mekan alternatifleri ve uygun saat planlamasıyla çekimlerinizi kesintisiz sürdürüyoruz.";
+
     const faqs = [
         { q: `${district}'ta hangi lokasyonları önerirsiniz?`, a: `${district} çevresindeki ${landmarks[0] || "doğal alanlar"} ve ışığın en güzel olduğu noktaları konsepte göre size özel listeliyoruz.` },
-        { q: "Albüm teslim süresi nedir?", a: "Tüm düzenlemeler ve baskı süreci dahil olmak üzere en geç 20 gün içinde ürünlerinizi kapınıza teslim ediyoruz." },
-        { q: "Hava durumu olumsuz olursa?", a: "Botanik Garden çekim platosu hem açık hem de kapalı alan konseptlerine sahip olduğu için yağmur, kar veya rüzgar gibi olumsuz hava şartlarında çekimlerimiz kesintisiz ve konforlu bir şekilde devam etmektedir." }
+        { q: `${region} dışından ${district} bölgesine geliyor musunuz?`, a: `Evet. Merkez Sivas başta olmak üzere ${region} ve çevre illerde yerinde çekim hizmeti veriyoruz; ulaşım ve konaklama detaylarını rezervasyon sırasında netleştiriyoruz.` },
+        { q: "Hava durumu olumsuz olursa?", a: weatherAnswer }
     ];
 
     return { title, description, h1, content, faqs };
 };
 
-export const generateSeoContent = async (district: string, service: string, landmarks: string[], targetType?: string): Promise<SeoContent | null> => {
+export const generateSeoContent = async (district: string, service: string, landmarks: string[], targetType?: string, region: string = "Sivas"): Promise<SeoContent | null> => {
     const slug = `${district.toLowerCase()}-${service.toLowerCase()}`.replace(/\s+/g, '-');
-    
+
     // 1. Check persistent cache first
     if (cache[slug]) {
         return cache[slug];
     }
 
     // 2. Try Gemini if API key exists
-    const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
     if (apiKey) {
         try {
-            let contextPrompt = `Aktif bir SEO uzmanı ve fotoğrafçı olarak ${district} ilçesinde ${service} hizmeti için 600 kelimelik, ikna edici ve EŞSİZ bir makale yaz.`;
+            const regionNote = region && region !== district
+                ? ` Bu bölge ${region} ilindedir; markamız Sivas merkezli olup ${region} ve çevresine yerinde çekim hizmeti vermektedir. Metinde yanlışlıkla "Sivas'ta" deme, doğru konum ${district}'tır.`
+                : '';
+            let contextPrompt = `Aktif bir SEO uzmanı ve fotoğrafçı olarak ${district} ve çevresinde ${service} hizmeti için 600 kelimelik, ikna edici ve EŞSİZ bir makale yaz. Markamızın adı "Sivas Düğün Fotoğrafçısı" (@sivasdugunfotografcisi).${regionNote}`;
             
             if (targetType === 'plateau-query' || targetType === 'plateau') {
                 contextPrompt = `Bir çekim platosu olan ${district} (Botanik Garden vb.) hakkında ${service} odaklı bir makale yaz. 
@@ -119,7 +134,8 @@ export const generateSeoContent = async (district: string, service: string, land
             JSON formatında dön: {title, description, h1, content, faqs: [{q, a}]}. 
             Dil: Türkçe.`;
 
-            const result = await geminiModel.generateContent(prompt);
+            const model = getGeminiModel();
+            const result = await model.generateContent(prompt);
             const response = await result.response;
             const text = response.text();
             const jsonMatch = text.match(/\{[\s\S]*\}/);

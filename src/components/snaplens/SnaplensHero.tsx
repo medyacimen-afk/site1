@@ -102,12 +102,12 @@ export default function SnaplensHero() {
                             <span className="group-hover:translate-x-1 transition-transform">→</span>
                         </Link>
                         
-                        <button className="flex items-center gap-3 group">
+                        <Link href="/videos" className="flex items-center gap-3 group">
                             <div className="w-12 h-12 border border-primary/20 rounded-full flex items-center justify-center text-primary group-hover:bg-primary group-hover:border-primary group-hover:text-primary-foreground transition-all">
                                 <Play className="w-4 h-4 ml-0.5 fill-current" />
                             </div>
                             <span className="text-foreground font-medium text-xs tracking-widest uppercase opacity-70 group-hover:opacity-100 transition-opacity">Videoyu İzle</span>
-                        </button>
+                        </Link>
                     </motion.div>
                 </div>
 

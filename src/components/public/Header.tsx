@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
+import { useSiteSettings } from '@/hooks/useSiteSettings'
 
 const navLinks = [
     { name: 'Ana Sayfa', href: '/' },
@@ -16,6 +17,7 @@ const navLinks = [
 export default function Header() {
     const [isScrolled, setIsScrolled] = useState(false)
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const { siteSettings } = useSiteSettings()
 
     useEffect(() => {
         const handleScroll = () => {
@@ -37,9 +39,9 @@ export default function Header() {
                 
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-1 group">
-                    <img 
-                        src="/logo-suat-abi-j.webp" 
-                        alt="Sivas Düğün Fotoğrafçısı®" 
+                    <img
+                        src={siteSettings.logoUrl || '/logo.webp'}
+                        alt={siteSettings.businessName}
                         className="h-10 w-auto object-contain transition-transform group-hover:scale-105"
                     />
                 </Link>

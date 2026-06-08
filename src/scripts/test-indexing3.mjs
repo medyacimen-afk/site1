@@ -7,16 +7,20 @@ async function test() {
     const match = envLocal.match(/GOOGLE_INDEXING_SERVICE_ACCOUNT='(.*?)'/);
     if (!match) throw new Error("No env var found");
     
-    const credentials = JSON.parse(match[1]);
-    
-    let privateKey = credentials.private_key || '';
-    if (!privateKey.includes('-----BEGIN PRIVATE KEY-----\n')) {
-      privateKey = privateKey.replace(/\\n/g, '\n');
-    }
+    // Create a new file with just the JSON content to be safe
+    const jsonStr = match[1];
+    const credentials = JSON.parse(jsonStr);
 
-    const auth = new google.auth.JWT({
-      email: credentials.client_email,
-      key: privateKey,
+    // Let's hardcode the replace exactly how it should be
+    let key = credentials.private_key;
+    key = key.split('\\n').join('\n');
+    key = key.split('\\\\n').join('\n');
+
+    const auth = new google.auth.GoogleAuth({
+      credentials: {
+        client_email: credentials.client_email,
+        private_key: key
+      },
       scopes: ['https://www.googleapis.com/auth/indexing'],
     });
 

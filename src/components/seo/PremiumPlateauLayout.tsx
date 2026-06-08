@@ -85,7 +85,7 @@ export default function PremiumPlateauLayout({
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                         <Link 
-                            href="https://wa.me/905324071563"
+                            href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP || ''}`}
                             className="w-full sm:w-auto bg-primary text-primary-foreground px-12 py-6 rounded-full font-bold flex items-center justify-center gap-3 hover:scale-105 transition-all shadow-xl shadow-primary/20"
                         >
                             <MessageCircle className="w-5 h-5" />
@@ -294,7 +294,7 @@ export default function PremiumPlateauLayout({
                                 <Link href="/online-rezervasyon" className="bg-primary text-primary-foreground px-12 py-6 rounded-full font-black text-lg w-full sm:w-auto uppercase tracking-widest hover:scale-105 transition-transform flex items-center justify-center gap-2 shadow-xl shadow-primary/20">
                                     <Calendar className="w-5 h-5" /> Randevu Al
                                 </Link>
-                                <Link href="tel:05324071563" className="bg-white text-slate-900 px-12 py-6 rounded-full font-black text-lg border border-black/10 w-full sm:w-auto uppercase tracking-widest hover:bg-slate-50 transition-colors flex items-center justify-center gap-2 shadow-sm">
+                                <Link href={`tel:${process.env.NEXT_PUBLIC_PHONE || ''}`} className="bg-white text-slate-900 px-12 py-6 rounded-full font-black text-lg border border-black/10 w-full sm:w-auto uppercase tracking-widest hover:bg-slate-50 transition-colors flex items-center justify-center gap-2 shadow-sm">
                                     <MessageCircle className="w-5 h-5" /> İletişim
                                 </Link>
                             </div>
