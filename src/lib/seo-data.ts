@@ -1,22 +1,4 @@
-export const districts = [
-    { id: "sivas", name: "Sivas", landmarks: ["Paşabahçe Mesire Alanı", "Sivas Kalesi", "Gök Medrese", "Çifte Minareli Medrese"] },
-    { id: "akincilar", name: "Akıncılar", landmarks: ["Gölova Barajı", "Akıncılar Yaylaları"] },
-    { id: "altinyayla", name: "Altınyayla", landmarks: ["Sarissa Antik Kenti", "Altınyayla Göleti"] },
-    { id: "divrigi", name: "Divriği", landmarks: ["Divriği Ulu Cami", "Divriği Kalesi", "Nuri Demirağ Evi"] },
-    { id: "dogansar", name: "Doğanşar", landmarks: ["Dipsiz Göl Şelalesi", "Doğanşar Yaylaları"] },
-    { id: "gemerek", name: "Gemerek", landmarks: ["Sızır Şelalesi", "Çat Ormanları"] },
-    { id: "golova", name: "Gölova", landmarks: ["Gölova Gölü", "Aydoğan Yaylası"] },
-    { id: "gurun", name: "Gürün", landmarks: ["Gökpınar Gölü", "Şuğul Vadisi"] },
-    { id: "hafik", name: "Hafik", landmarks: ["Hafik Gölü", "Lota Gölü"] },
-    { id: "imranli", name: "İmranlı", landmarks: ["Kızılırmak Doğduğu Yer", "İmranlı Barajı"] },
-    { id: "kangal", name: "Kangal", landmarks: ["Balıklı Kaplıca", "Kangal Köpeği Çiftliği"] },
-    { id: "koyulhisar", name: "Koyulhisar", landmarks: ["Eğriçimen Yaylası", "Tekke Deresi"] },
-    { id: "susehri", name: "Suşehri", landmarks: ["Kılıçkaya Barajı", "Suşehri Ovası"] },
-    { id: "sarkisla", name: "Şarkışla", landmarks: ["Aşık Veysel Müzesi", "Ortaköy Çermiği"] },
-    { id: "ulas", name: "Ulaş", landmarks: ["Ulaş Gölü", "Tecer Dağı"] },
-    { id: "yildizeli", name: "Yıldızeli", landmarks: ["Yıldız Dağı Kayak Merkezi", "Sıcak Çermik"] },
-    { id: "zara", name: "Zara", landmarks: ["Tödürge Gölü", "Zara Yaylaları"] }
-];
+export const districts = [] as { id: string; name: string; landmarks: string[] }[];
 
 export const services = [
     { id: "dugun-fotografcisi", name: "Düğün Fotoğrafçısı", category: "Temel" },
@@ -45,13 +27,7 @@ export const services = [
     { id: "dis-cekim-paketleri", name: "Dış Çekim Paketleri", category: "Ticari" }
 ];
 
-export const plateaus = [
-    { id: "botanik-garden", name: "Botanik Garden Çekim Platosu" },
-    { id: "helios-gardenia", name: "Helios Gardenia Çekim Platosu" },
-    { id: "rose-garden", name: "Rose Garden Çekim Platosu" },
-    { id: "sivas-bungalow", name: "Sivas Bungalow Çekim Platosu" },
-    { id: "foto-nuri-plato", name: "Foto Nuri Çekim Platosu" }
-];
+export const plateaus = [] as { id: string; name: string }[];
 
 export const plateauQueries = [
     { id: "cekimi", name: "Çekim Paketi" },
@@ -128,44 +104,7 @@ export const slugify = (text: string) => {
 
 // ——— Sivas dışında yerinde çekim hizmeti verilen çevre iller ve ilçeleri ———
 // Bu bölgeler de gerçek landing page'lere sahiptir ([slug] sayfası konum-bağımsız çalışır).
-export const regionProvinces = [
-    {
-        province: "Tokat",
-        districts: ["Merkez", "Almus", "Artova", "Başçiftlik", "Erbaa", "Niksar", "Pazar", "Reşadiye", "Sulusaray", "Turhal", "Yeşilyurt", "Zile"]
-    },
-    {
-        province: "Kayseri",
-        districts: ["Merkez", "Kocasinan", "Melikgazi", "Talas", "Akkışla", "Bünyan", "Develi", "Felahiye", "Hacılar", "İncesu", "Özvatan", "Pınarbaşı", "Sarıoğlan", "Sarız", "Tomarza", "Yahyalı", "Yeşilhisar"]
-    },
-    {
-        province: "Malatya",
-        districts: ["Merkez", "Battalgazi", "Akçadağ", "Arapgir", "Arguvan", "Darende", "Doğanşehir", "Doğanyol", "Hekimhan", "Kale", "Kuluncak", "Pütürge", "Yazıhan"]
-    },
-    {
-        province: "Erzincan",
-        districts: ["Merkez", "Çayırlı", "İliç", "Kemah", "Kemaliye", "Otlukbeli", "Refahiye", "Tercan", "Üzümlü"]
-    },
-    {
-        province: "Yozgat",
-        districts: ["Merkez", "Akdağmadeni", "Aydıncık", "Boğazlıyan", "Çandır", "Çayıralan", "Çekerek", "Kadışehri", "Saraykent", "Sarıkaya", "Sorgun", "Şefaatli", "Yenifakılı", "Yerköy"]
-    },
-    {
-        province: "Nevşehir",
-        districts: ["Merkez", "Acıgöl", "Avanos", "Derinkuyu", "Gülşehir", "Hacıbektaş", "Kozaklı", "Ürgüp"]
-    },
-    {
-        province: "Ordu",
-        districts: ["Altınordu", "Akkuş", "Aybastı", "Çamaş", "Çatalpınar", "Çaybaşı", "Fatsa", "Gölköy", "Gülyalı", "Gürgentepe", "İkizce", "Kabadüz", "Kabataş", "Korgan", "Kumru", "Mesudiye", "Perşembe", "Ulubey", "Ünye"]
-    },
-    {
-        province: "Kahramanmaraş",
-        districts: ["Onikişubat", "Dulkadiroğlu", "Afşin", "Andırın", "Çağlayancerit", "Ekinözü", "Elbistan", "Göksun", "Nurhak", "Pazarcık", "Türkoğlu"]
-    },
-    {
-        province: "Giresun",
-        districts: ["Şebinkarahisar", "Alucra", "Çamoluk"]
-    }
-];
+export const regionProvinces = [] as { province: string; districts: string[] }[];
 
 // regionProvinces'i benzersiz konum listesine düzleştir.
 // - Her ilin "Merkez"i, il adıyla temsil edilir (ör. Tokat -> tokat-dugun-fotografcisi).
@@ -191,36 +130,7 @@ export const regionLocations: { name: string; slug: string; province: string; la
 })();
 
 // ——— Bölgeye özgü özel konsept çekim sayfaları ———
-export const specialPages = [
-    {
-        slug: "kapadokya-dugun-fotografcisi",
-        title: "Kapadokya Düğün Fotoğrafçısı",
-        location: "Kapadokya",
-        service: "Düğün ve Dış Çekim Fotoğrafçılığı",
-        landmarks: ["Göreme", "Ürgüp", "Avanos", "Uçhisar", "Peribacaları"]
-    },
-    {
-        slug: "kapadokya-balon-cekimi",
-        title: "Kapadokya Balon Çekimi",
-        location: "Kapadokya",
-        service: "Sıcak Hava Balonu Çekimi",
-        landmarks: ["Göreme", "sıcak hava balonları", "gün doğumu"]
-    },
-    {
-        slug: "kapadokya-evlilik-teklifi",
-        title: "Kapadokya Evlilik Teklifi Çekimi",
-        location: "Kapadokya",
-        service: "Evlilik Teklifi Organizasyonu ve Çekimi",
-        landmarks: ["Peribacaları", "balon manzarası", "gün doğumu"]
-    },
-    {
-        slug: "kayseri-yilki-atlari-cekimi",
-        title: "Kayseri Yılkı Atları Konsept Çekimi",
-        location: "Kayseri",
-        service: "Yılkı Atları Konsept Çekimi",
-        landmarks: ["Hörmetçi Sazlığı", "yılkı atları", "gün batımı"]
-    }
-];
+export const specialPages = [] as { slug: string; title: string; location: string; service: string; landmarks: string[] }[];
 
 export const parseSlug = (slug: string) => {
     // 0. Özel konsept sayfaları (tam eşleşme) — diğer kontrollerden önce
