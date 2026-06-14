@@ -9,7 +9,7 @@ interface SeoContent {
     faqs: { q: string, a: string }[];
 }
 
-const cache: Record<string, SeoContent> = cacheData;
+const cache: Record<string, SeoContent> = cacheData as Record<string, SeoContent>;
 
 // Semantic Matrix for High-Fidelity Variation
 const variations = {
