@@ -22,7 +22,7 @@ export async function POST(request: Request) {
         // Gerçek adres / kimlik bilgisini kullan (yoksa güvenli varsayılan)
         const tc = String(user?.tcNo || '').replace(/\D/g, '')
         const identityNumber = tc.length === 11 ? tc : '11111111111'
-        const realAddress = (user?.address && String(user.address).trim()) || 'Sivas Merkez'
+        const realAddress = (user?.address && String(user.address).trim()) || 'Şehir Merkez'
         const contactFullName = `${user?.brideName || 'Gelin'}${user?.groomName ? ' & ' + user.groomName : ''}`
 
         const result = await checkoutFormInitialize({
@@ -43,13 +43,13 @@ export async function POST(request: Request) {
                 registrationDate: '2023-04-21 15:12:09',
                 registrationAddress: realAddress,
                 ip: '85.34.78.112',
-                city: 'Sivas',
+                city: 'Şehir',
                 country: 'Turkey',
                 zipCode: '58000'
             },
             shippingAddress: {
                 contactName: contactFullName,
-                city: 'Sivas',
+                city: 'Şehir',
                 country: 'Turkey',
                 address: realAddress,
                 zipCode: '58000'

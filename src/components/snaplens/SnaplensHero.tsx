@@ -36,7 +36,7 @@ export default function SnaplensHero() {
 
     // CMS'den veri gelmediyse fallback metinler
     const displayTitle = settings.heroTitle || "En Özel Anları Yakalıyoruz,<br/>Sizin Hikayenizi Yazıyoruz"
-    const displaySubtitle = settings.heroSubtitle || "Sivas'ın en çok tercih edilen düğün fotoğrafçısı olarak, en mutlu gününüzü profesyonel kadromuz ve son teknoloji ekipmanlarımızla hikayeleştiriyoruz."
+    const displaySubtitle = settings.heroSubtitle || "Bölgenin en çok tercih edilen düğün fotoğrafçısı olarak, en mutlu gününüzü profesyonel kadromuz ve son teknoloji ekipmanlarımızla hikayeleştiriyoruz."
 
     return (
         <section className="relative h-[100svh] w-full overflow-hidden flex items-center bg-white">
@@ -71,7 +71,7 @@ export default function SnaplensHero() {
                         className="flex items-center gap-2 mb-6"
                     >
                         <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                        <span className="text-foreground/70 text-xs tracking-[0.3em] uppercase font-medium">Sivas Düğün Fotoğrafçısı</span>
+                        <span className="text-foreground/70 text-xs tracking-[0.3em] uppercase font-medium">Profesyonel Düğün Fotoğrafçısı</span>
                     </motion.div>
 
                     <motion.h1 

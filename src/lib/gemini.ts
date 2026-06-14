@@ -28,7 +28,7 @@ export const generateBlogContent = async (topic: string, tone: string = "profess
     if (!key) throw new Error("Gemini API anahtarı bulunamadı. Admin paneli → Ayarlar → Yapay Zeka bölümünden ekleyin.");
 
     const prompt = `
-        Sen "Sivas Düğün Fotoğrafçısı" markasının profesyonel blog yazarı ve SEO uzmanısın.
+        Sen \"Profesyonel Düğün Fotoğrafçısı\" markasının yetenekli blog yazarı ve SEO uzmanısın.
         Konu: "${topic}"
         Ton: "${tone}"
         Dil: Türkçe
@@ -39,7 +39,7 @@ export const generateBlogContent = async (topic: string, tone: string = "profess
         2. Kısa ve merak uyandırıcı bir giriş paragrafı (excerpt).
         3. Alt başlıklar kullanarak detaylı içerik.
         4. Çiftler için 3-4 adet altın değerinde tavsiye.
-        5. Markamızın ("Sivas Düğün Fotoğrafçısı") Sivas'taki kalitesini vurgulayan bir kapanış.
+        5. Markamızın kalitesini vurgulayan ve iletişim bilgilerine (veya online rezervasyon sistemine) yönlendiren güçlü bir kapanış.
 
         ÖNEMLİ: Çıktıyı mutlaka JSON formatında şu anahtarlarla ver:
         {

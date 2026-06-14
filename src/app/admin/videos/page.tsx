@@ -116,7 +116,7 @@ export default function AdminVideosPage() {
                                 value={newTitle}
                                 onChange={(e) => setNewTitle(e.target.value)}
                                 className="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-[#D49A73] focus:border-[#D49A73] outline-none"
-                                placeholder="Örn: Sivas Düğün Hikayesi - Ahmet & Ayşe"
+                                placeholder="Örn: Düğün Hikayesi - Ahmet & Ayşe"
                             />
                         </div>
                         <div className="space-y-2">

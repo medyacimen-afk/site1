@@ -7,7 +7,7 @@ export default function Testimonials() {
     const reviews = [
         {
             name: "Elif & Ahmet",
-            text: "Hayatımızın en özel gününü Sivas Düğün Fotoğrafçısı ekibine emanet ettiğimiz için çok mutluyuz. Çekimler boyunca bizi o kadar rahat hissettirdiler ki, ortaya çıkan sonuçlar hayal ettiğimizden de güzel oldu.",
+            text: "Hayatımızın en özel gününü bu harika ekibe emanet ettiğimiz için çok mutluyuz. Çekimler boyunca bizi o kadar rahat hissettirdiler ki, ortaya çıkan sonuçlar hayal ettiğimizden de güzel oldu.",
             role: "Düğün Çekimi"
         },
         {
@@ -17,7 +17,7 @@ export default function Testimonials() {
         },
         {
             name: "Selin & Murat",
-            text: "Ekip hem çok yaratıcı hem de çok disiplinli. Sivas'ta fark yaratan tek adres diyebilirim. Albümlerimiz elimize ulaştığında kalitesine hayran kaldık.",
+            text: "Ekip hem çok yaratıcı hem de çok disiplinli. Şehirde fark yaratan tek adres diyebilirim. Albümlerimiz elimize ulaştığında kalitesine hayran kaldık.",
             role: "Nişan Çekimi"
         }
     ]

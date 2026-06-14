@@ -4,7 +4,7 @@ import { Send, CheckCircle2, AlertCircle, Loader2, Globe, Search, Zap, List, Inf
 import { toast } from 'sonner'
 import { districts, services, plateaus, plateauQueries, slugify, regionLocations, specialPages } from '@/lib/seo-data'
 
-const BASE_URL = 'https://sivasdugunfotografcisi.com'
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://ornek-domain.com'
 const DAILY_LIMIT = 200
 
 // Tüm URL'leri üret
@@ -306,7 +306,7 @@ export default function IndexingPage() {
                             type="text" value={url}
                             onChange={(e) => setUrl(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleIndex(url)}
-                            placeholder="https://sivasdugunfotografcisi.com/sayfa-adi"
+                            placeholder="https://ornek-domain.com/sayfa-adi"
                             className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D49A73]/20 focus:border-[#D49A73] transition-all"
                         />
                     </div>
